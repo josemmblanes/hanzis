@@ -480,15 +480,22 @@ async function loadAllCourses() {
   const results = [];
   for (const course of COURSE_FILES) {
     try {
-      const res = await fetch(course.file);
-      if (!res.ok) continue; 
+      // Modificado para evitar la caché persistente del navegador e imprimir errores reales en consola
+      const res = await fetch(course.file + "?t=" + new Date().getTime());
+      if (!res.ok) {
+        console.error(`Error de red/ruta al cargar: ${course.file}. Estado HTTP: ${res.status}`);
+        continue; 
+      }
       const data = await res.json();
       data.forEach(entry => {
         entry._course = course.id;
         entry.tone = computeTone(entry.hanzi, entry.pinyin);
       });
       results.push({ ...course, words: data });
-    } catch (e) { continue; }
+    } catch (e) { 
+      console.error(`Error crítico parseando el JSON de ${course.file}:`, e);
+      continue; 
+    }
   }
   return results;
 }
@@ -728,7 +735,7 @@ function render() {
   if (state.screen === "error") {
     app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
       el("div", { style: "color:rgba(240,232,254,0.6);font-size:14px;text-align:center" },
-        "No se pudo cargar ningún fichero de vocabulario. Revisa la carpeta /data/.")
+        "No se pudo cargar ningún fichero de vocabulario. Revisa la carpeta /data/ y mira los logs de la consola.")
     ));
     return;
   }
