@@ -285,6 +285,7 @@
     border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 11px; display: block; margin: 16px auto 0 auto;
   }
   .warning-text { font-size: 12px; color: rgba(192,132,252,0.7); margin-top: 4px; text-align: center; }
+  .credit-text { font-size: 11px; color: rgba(240,232,254,0.35); text-align: center; margin-top: 14px; font-style: italic; }
 </style>
 </head>
 <body>
@@ -528,7 +529,6 @@ let currentActiveChar = "";
 
 function openStrokeModal(hanziString) {
   if (!hanziString) return;
-  // Filtrar solo caracteres chinos válidos aproximados (evitar signos de puntuación)
   const characters = hanziString.replace(/[^\u4e00-\u9fa5]/g, "").split("");
   if (characters.length === 0) return;
 
@@ -712,6 +712,9 @@ function render() {
     main.appendChild(list);
 
     main.appendChild(renderVoiceControls());
+    
+    // Crédito añadido de forma dinámica en la parte inferior de la pantalla inicial
+    main.appendChild(el("div", { class: "credit-text" }, "por obra de José Mª Martínez Blanes"));
 
     const totalSel = state.allWords.filter(w => state.selectedCourses.includes(w._course)).length;
     main.appendChild(el("button", {
