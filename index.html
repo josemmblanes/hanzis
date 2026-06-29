@@ -207,10 +207,7 @@
   .opt-btn.correct { background: rgba(39,174,96,0.2); border-color: #27ae60; color: #5dfc8a; }
   .opt-btn.wrong { background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #ff8080; }
 
-  .tone-tags { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
-  .tone-tag { color: white; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; min-width: 28px; }
-
-  /* CORREGIDO: Rediseño responsivo de filas de Vocabulario para iPhone/Móviles */
+  /* Rediseño responsivo de filas de Vocabulario para iPhone/Móviles */
   .search-input {
     width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(192,132,252,0.3);
     border-radius: 12px; padding: 12px 16px; color: #f0e8fe; font-size: 14px;
@@ -292,7 +289,6 @@ const TONE_MAP = {
 };
 
 const TONE_COLORS = { "1":"#ff2a2a","2":"#ffb000","3":"#27ae60","4":"#2980b9","0":"#a78bfa" };
-const TONE_LABELS = { "1":"1°","2":"2°","3":"3°","4":"4°","0":"N" };
 
 function getToneOfSyllable(syll) {
   for (const ch of syll) {
@@ -505,14 +501,6 @@ function header(title, rightText, backFn) {
   ]);
 }
 
-function toneTagsEl(tone) {
-  const wrap = el("div", { class: "tone-tags" });
-  tone.split("-").forEach(t => {
-    wrap.appendChild(el("span", { class: "tone-tag", style: `background:${getToneColor(t)}` }, TONE_LABELS[t] || t));
-  });
-  return wrap;
-}
-
 function coloredHanziEl(hanzi, tone, size) {
   const tones = tone.split("-");
   const wrap = el("div", { class: "word-hanzi", style: `font-size:${size}px` });
@@ -683,7 +671,6 @@ function render() {
     card.appendChild(coloredHanziEl(word.hanzi, word.tone, 56));
     if (state.showPinyin || state.flipped) card.appendChild(el("div", { class: "pinyin-text" }, word.pinyin));
     if (state.flipped) {
-      card.appendChild(toneTagsEl(word.tone));
       card.appendChild(el("div", { class: "meaning-text" }, word.meaning));
     } else {
       card.appendChild(el("div", { class: "hint-text" }, "Toca para ver el significado"));
@@ -751,7 +738,6 @@ function render() {
       card.appendChild(el("div", { style: "font-size:11px;color:rgba(240,232,254,0.4);letter-spacing:1px" }, wasCorrect ? "✓ Correcto" : "✗ Incorrecto"));
       card.appendChild(coloredHanziEl(current.hanzi, current.tone, 50));
       card.appendChild(el("div", { style: "font-size:16px;color:#c084fc" }, current.pinyin));
-      card.appendChild(toneTagsEl(current.tone));
       card.appendChild(el("div", { style: "font-size:13px;color:rgba(240,232,254,0.8);line-height:1.4;max-width:480px" }, current.meaning));
       card.appendChild(el("button", { style: "margin-top:4px;background:rgba(147,51,234,0.3);border:1px solid rgba(192,132,252,0.4);color:#c084fc;border-radius:8px;padding:5px 14px;cursor:pointer;font-size:12px", onclick: () => speak(current.hanzi) }, "🔊 Escuchar de nuevo"));
     }
@@ -796,7 +782,6 @@ function render() {
       const wgt = state.weights[idx] || 1;
       const realLevelText = COURSE_LEVEL_LABELS[word._course] || word._course;
 
-      // MODIFICADO: Estructura interna adaptativa para que el texto fluya verticalmente sin desbordar en pantallas estrechas
       const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
         el("div", { class: "word-left-block" }, [
           el("div", { class: "word-top-meta" }, [
@@ -807,7 +792,6 @@ function render() {
           el("div", { class: "word-meaning" }, word.meaning)
         ]),
         el("div", { class: "word-right-block" }, [
-          toneTagsEl(word.tone),
           wgt > 1 ? el("span", { class: "weight-badge" }, "×" + wgt) : null,
           el("button", { class: "play-icon-btn", onclick: () => speak(word.hanzi) }, "🔊")
         ])
