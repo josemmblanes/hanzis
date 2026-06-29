@@ -246,9 +246,12 @@
 <div id="app"></div>
 
 <script>
+// SECCIÓN MODIFICADA: Ahora incluye los 4 archivos JSON con los nombres solicitados
 const COURSE_FILES = [
   { id: "HSK1",   file: "data/HSK1.json",   label: "Curso 1" },
-  { id: "HSK2",   file: "data/HSK2.json",   label: "Curso 2" }
+  { id: "HSK2",   file: "data/HSK2.json",   label: "Curso 2" },
+  { id: "HSK3_1", file: "data/HSK3_1.json", label: "Curso 3 上" },
+  { id: "HSK3_2", file: "data/HSK3_2.json", label: "Curso 3 下" }
 ];
 
 const TONE_MAP = {
@@ -510,7 +513,7 @@ function coloredHanziEl(hanzi, tone, size) {
   return wrap;
 }
 
-/* Panel de control de voz de la pantalla principal */
+/* Panel de control de voz de la página principal */
 function renderVoiceControls() {
   const selectVoz = el("select", {
     class: "voice-select",
@@ -595,7 +598,6 @@ function render() {
     });
     main.appendChild(list);
 
-    // INSERCIÓN DE LOS CONTROLES DE VOZ EN LA PÁGINA INICIAL
     main.appendChild(renderVoiceControls());
 
     const totalSel = state.allWords.filter(w => state.selectedCourses.includes(w._course)).length;
