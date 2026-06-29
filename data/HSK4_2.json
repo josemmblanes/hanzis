@@ -124,7 +124,7 @@
   { "hanzi": "(太)阳光", "pinyin": "(tài) yáng guāng", "meaning": "luz solar", "level": "HSK4", "curso": "4中", "tema": "7" },
   { "hanzi": "民族", "pinyin": "mín zú", "meaning": "grupo étnico", "level": "HSK4", "curso": "4中", "tema": "7" },
   { "hanzi": "光亮", "pinyin": "guāng liàng", "meaning": "luz (sust.) --de cualquier fuente- brillante / luminoso", "level": "HSK4", "curso": "4中", "tema": "7" },
-  { "hanzi": "汉族", "pinyin": "hàn zú", "meaning": "etnia Han", level: "HSK4", "curso": "4中", "tema": "7" },
+  { "hanzi": "汉族", "pinyin": "hàn zú", "meaning": "etnia Han", "level": "HSK4", "curso": "4中", "tema": "7" },
   { "hanzi": "灯光", "pinyin": "deng guāng", "meaning": "luz, iluminación, alumbrado", "level": "HSK4", "curso": "4中", "tema": "7" },
   { "hanzi": "少数民族", "pinyin": "shǎo shù mín zú", "meaning": "minoría étnica", "level": "HSK4", "curso": "4中", "tema": "7" },
   { "hanzi": "有...(之)处", "pinyin": "yǒu ... (zhī) chù", "meaning": "tener partes, tener aspectos, tener puntos", "level": "HSK4", "curso": "4中", "tema": "7" },
