@@ -284,18 +284,16 @@ function computeTone(hanzi, pinyin) {
 function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
 
 /* ============================================================
-   SISTEMA DE VOZ AVANZADO (CORREGIDO PARA NUEVAS VOCES LOCALES)
+   SISTEMA DE VOZ AVANZADO (PROCESAMIENTO GLOBAL)
    ============================================================ */
 let currentExternalAudio = null;
 
-// Configuración global persistida de la interfaz de audio
 let selectedVoiceType = localStorage.getItem("hanzi-voice-type") || "youdao";
 let selectedVoiceSpeed = parseFloat(localStorage.getItem("hanzi-voice-speed") || "1.0");
 
 function speak(text) {
   if (!text) return;
   
-  // Detener audios anteriores nativos y externos para evitar solapamientos
   if (typeof speechSynthesis !== 'undefined') {
     speechSynthesis.cancel();
   }
@@ -304,22 +302,18 @@ function speak(text) {
     currentExternalAudio.currentTime = 0;
   }
 
-  // Opción 1: Voz Estándar Externa (Motor Youdao)
   if (selectedVoiceType === "youdao") {
     const url = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
     currentExternalAudio = new Audio(url);
-    // Nota: Youdao no soporta cambiar dinámicamente la velocidad local por API nativa de forma estable
     currentExternalAudio.play().catch(() => {});
     return;
   }
 
-  // Opción 2: Voces del Sistema de Windows (Nativas locales)
   if (typeof SpeechSynthesisUtterance !== 'undefined') {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
     utterance.rate = selectedVoiceSpeed;
 
-    // Filtrar la lista de voces en Mandarín reconocidas por el navegador
     const zhVoices = speechSynthesis.getVoices().filter(v => 
       v.lang.toLowerCase().startsWith('zh-cn') || 
       v.lang.toLowerCase().startsWith('zh_cn') ||
@@ -328,13 +322,13 @@ function speak(text) {
 
     if (zhVoices.length > 0) {
       if (selectedVoiceType === "fluida" && zhVoices[0]) {
-        utterance.voice = zhVoices[0]; // Por ejemplo Huihui
+        utterance.voice = zhVoices[0];
       } else if (selectedVoiceType === "energica" && zhVoices[1]) {
-        utterance.voice = zhVoices[1]; // Por ejemplo Kangkang
+        utterance.voice = zhVoices[1];
       } else if (selectedVoiceType === "locutor" && zhVoices[2]) {
-        utterance.voice = zhVoices[2]; // Por ejemplo Yaoyao
+        utterance.voice = zhVoices[2];
       } else {
-        utterance.voice = zhVoices[0]; // Fallback automático
+        utterance.voice = zhVoices[0];
       }
     }
 
@@ -342,10 +336,8 @@ function speak(text) {
   }
 }
 
-// Carga inicial obligatoria de voces en navegadores basados en Chromium / Chrome
 if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
   speechSynthesis.onvoiceschanged = () => {
-    // Esto fuerza al navegador a poblar la lista interna de voces del registro de Windows inmediatamente
     speechSynthesis.getVoices();
   };
 }
@@ -518,7 +510,7 @@ function coloredHanziEl(hanzi, tone, size) {
   return wrap;
 }
 
-/* Panel reusable de controles de voz inferiores */
+/* Panel de control de voz de la pantalla principal */
 function renderVoiceControls() {
   const selectVoz = el("select", {
     class: "voice-select",
@@ -602,6 +594,9 @@ function render() {
       list.appendChild(btn);
     });
     main.appendChild(list);
+
+    // INSERCIÓN DE LOS CONTROLES DE VOZ EN LA PÁGINA INICIAL
+    main.appendChild(renderVoiceControls());
 
     const totalSel = state.allWords.filter(w => state.selectedCourses.includes(w._course)).length;
     main.appendChild(el("button", {
@@ -698,7 +693,6 @@ function render() {
     main.appendChild(card);
     main.appendChild(controls);
     main.appendChild(pinyinToggle);
-    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Tarjetas Flash", (state.cardIndex + 1) + "/" + state.shuffled.length, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
@@ -765,8 +759,6 @@ function render() {
       });
       main.appendChild(grid);
     }
-    
-    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Quiz", "✓ " + state.quiz.score, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
@@ -809,7 +801,6 @@ function render() {
     });
     if (filtered.length === 0) list.appendChild(el("div", { class: "empty-state" }, "Sin resultados."));
     main.appendChild(list);
-    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Vocabulario", filtered.length.toString(), () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
