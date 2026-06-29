@@ -207,7 +207,7 @@
   .tone-tags { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
   .tone-tag { color: white; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; min-width: 28px; }
 
-  /* Browse / Vocabulario Completo — Modificado basado en image_e5ef7e.png */
+  /* Browse / Vocabulario Completo */
   .search-input {
     width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(192,132,252,0.3);
     border-radius: 12px; padding: 12px 16px; color: #f0e8fe; font-size: 14px;
@@ -251,18 +251,26 @@
 <div id="app"></div>
 
 <script>
+// MODIFICADO: Añadidos los tres nuevos niveles de HSK 4
 const COURSE_FILES = [
   { id: "HSK1",   file: "data/HSK1.json",   label: "Curso 1" },
   { id: "HSK2",   file: "data/HSK2.json",   label: "Curso 2" },
   { id: "HSK3_1", file: "data/HSK3_1.json", label: "Curso 3 上" },
-  { id: "HSK3_2", file: "data/HSK3_2.json", label: "Curso 3 下" }
+  { id: "HSK3_2", file: "data/HSK3_2.json", label: "Curso 3 下" },
+  { id: "HSK4_1", file: "data/HSK4_1.json", label: "Curso 4 上" },
+  { id: "HSK4_2", file: "data/HSK4_2.json", label: "Curso 4 中" },
+  { id: "HSK4_3", file: "data/HSK4_3.json", label: "Curso 4 下" }
 ];
 
+// MODIFICADO: Mapeo estético para los nuevos ficheros
 const COURSE_LEVEL_LABELS = {
   "HSK1": "HSK 1",
   "HSK2": "HSK 2",
   "HSK3_1": "HSK 3",
-  "HSK3_2": "HSK 3"
+  "HSK3_2": "HSK 3",
+  "HSK4_1": "HSK 4",
+  "HSK4_2": "HSK 4",
+  "HSK4_3": "HSK 4"
 };
 
 const TONE_MAP = {
@@ -777,16 +785,13 @@ function render() {
       const wgt = state.weights[idx] || 1;
       const realLevelText = COURSE_LEVEL_LABELS[word._course] || word._course;
 
-      // MODIFICACIÓN COMPLETA DE ALINEACIÓN SEGÚN image_e5ef7e.png
       const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
-        // Bloque Izquierdo: Nivel HSK -> Hanzi -> Pinyin -> Significado
         el("div", { class: "word-left-block" }, [
           el("div", { class: "word-course-tag" }, realLevelText),
           coloredHanziEl(word.hanzi, word.tone, 32),
           el("div", { class: "word-pinyin" }, word.pinyin),
           el("div", { class: "word-meaning" }, word.meaning)
         ]),
-        // Bloque Derecho: Badge de tono -> Peso (si aplica) -> Botón de audio
         el("div", { class: "word-right-block" }, [
           toneTagsEl(word.tone),
           wgt > 1 ? el("span", { class: "weight-badge" }, "×" + wgt) : null,
