@@ -256,7 +256,7 @@ function computeTone(hanzi, pinyin) {
 function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
 
 /* ============================================================
-   SISTEMA DE AUDIO DIGITAL DE ALTA FIDELIDAD (MICROSOFT AZURE)
+   SISTEMA DE AUDIO DIGITAL DE ALTA FIDELIDAD (MÉTODO ULTRAESTABLE)
    ============================================================ */
 let currentAudio = null;
 
@@ -267,14 +267,25 @@ function speak(text) {
     currentAudio.currentTime = 0;
   }
   
-  // Usamos el motor de síntesis premium público de Microsoft con la voz seleccionada por el usuario
-  const voice = state.selectedVoice || "zh-CN-XiaoxiaoNeural"; 
-  const url = "https://tts.baidu.com/text2audio?tex=" + encodeURIComponent(text) + "&lan=zh&cuid=dict&pdt=301&vol=9&per=" + (voice === "zh-CN-YunxiNeural" ? "4" : "0");
-  
-  // Si prefieres usar la API directa y limpia de Microsoft Azure Edge Translation Services sin restricciones:
-  const azureUrl = "https://api.microsofttranslator.com/v2/http.svc/Speak?appid=bf05728e-539c-4aa9-9404-51e85d8e7887&language=zh-CN&options=MaxQuality&voice=" + voice + "&text=" + encodeURIComponent(text);
+  const voiceId = state.selectedVoice || "0"; 
+  let finalUrl = "";
 
-  currentAudio = new Audio(azureUrl);
+  // Selector dinámico usando pasarelas nativas de alta fidelidad estables sin CORS
+  if (voiceId === "0") {
+    // Voz Estándar Femenina Limpia
+    finalUrl = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
+  } else if (voiceId === "1") {
+    // Voz Neural Femenina Enérgica
+    finalUrl = "https://tts.baidu.com/text2audio?tex=" + encodeURIComponent(text) + "&lan=zh&cuid=dict&pdt=301&vol=9&per=0";
+  } else if (voiceId === "3") {
+    // Voz Neural Masculina Natural
+    finalUrl = "https://tts.baidu.com/text2audio?tex=" + encodeURIComponent(text) + "&lan=zh&cuid=dict&pdt=301&vol=9&per=3";
+  } else {
+    // Voz Neural Masculina Corporativa/Locutor
+    finalUrl = "https://tts.baidu.com/text2audio?tex=" + encodeURIComponent(text) + "&lan=zh&cuid=dict&pdt=301&vol=9&per=4";
+  }
+
+  currentAudio = new Audio(finalUrl);
   
   if (state.voiceSpeed) {
     currentAudio.playbackRate = state.voiceSpeed;
@@ -309,7 +320,7 @@ const state = {
   showPinyin: true,
   browseSearch: "",
   voiceSpeed: 0.75, 
-  selectedVoice: "zh-CN-XiaoxiaoNeural", // Voz por defecto (Femenina Premium Enérgica)
+  selectedVoice: "0", 
   quiz: { queue: [], pos: 0, options: [], selected: null, score: 0, total: 0, done: false },
 };
 
@@ -592,24 +603,23 @@ function render() {
         state.showPinyin ? "🔤 Ocultar Pinyin" : "🔤 Mostrar Pinyin")
     );
 
-    // PANEL SELECTOR DE VOZ Y VELOCIDAD INTEGRADO
     const speedLabel = el("span", { style: "font-size:12px;color:#c084fc;font-weight:700;" }, state.voiceSpeed.toFixed(2) + "x");
     
-    // Lista de opciones de voces Premium de Microsoft Azure Neural
+    // Lista de opciones de voces Premium sin restricciones
     const voiceDropdown = el("select", {
       class: "voice-select-dropdown",
       onchange: (e) => {
         state.selectedVoice = e.target.value;
       }
     }, [
-      el("option", { value: "zh-CN-XiaoxiaoNeural", selected: state.selectedVoice === "zh-CN-XiaoxiaoNeural" ? "selected" : null }, "👩 Xiaoxiao (Firme)"),
-      el("option", { value: "zh-CN-XiaoyiNeural", selected: state.selectedVoice === "zh-CN-XiaoyiNeural" ? "selected" : null }, "👧 Xiaoyi (Afectuosa)"),
-      el("option", { value: "zh-CN-YunxiNeural", selected: state.selectedVoice === "zh-CN-YunxiNeural" ? "selected" : null }, "👦 Yunxi (Enérgico)"),
-      el("option", { value: "zh-CN-YunyangNeural", selected: state.selectedVoice === "zh-CN-YunyangNeural" ? "selected" : null }, "👨 Yunyang (Locutor)")
+      el("option", { value: "0", selected: state.selectedVoice === "0" ? "selected" : null }, "👩 Voz Estándar"),
+      el("option", { value: "1", selected: state.selectedVoice === "1" ? "selected" : null }, "👧 Voz Fluida"),
+      el("option", { value: "3", selected: state.selectedVoice === "3" ? "selected" : null }, "👦 Voz Enérgica"),
+      el("option", { value: "4", selected: state.selectedVoice === "4" ? "selected" : null }, "👨 Voz Locutor")
     ]);
 
     const speedSlider = el("div", { style: "display:flex;flex-direction:column;gap:12px;margin:14px auto;background:rgba(255,255,255,0.03);border:1px solid rgba(192,132,252,0.15);padding:14px 16px;border-radius:12px;max-width:320px;" }, [
-      el("div", { style: "display:flex;align-items:center;justify-content:between;width:100%;justify-content:space-between;" }, [
+      el("div", { style: "display:flex;align-items:center;width:100%;justify-content:space-between;" }, [
         el("span", { style: "font-size:12px;color:rgba(240,232,254,0.5)" }, "Tipo de voz:"),
         voiceDropdown
       ]),
