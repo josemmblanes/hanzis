@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -256,6 +256,12 @@ function speak(text) {
   // Usamos una URL pública y directa que reproduce la voz china de alta calidad sin depender de Vercel
   const url = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
   currentAudio = new Audio(url);
+  
+  // Asignamos la velocidad guardada en el estado antes de reproducir
+  if (state.voiceSpeed) {
+    currentAudio.playbackRate = state.voiceSpeed;
+  }
+  
   currentAudio.play().catch(() => {});
 }
 
@@ -284,6 +290,7 @@ const state = {
   flipped: false,
   showPinyin: true,
   browseSearch: "",
+  voiceSpeed: 0.75, // Velocidad inicial por defecto (0.75x)
   quiz: { queue: [], pos: 0, options: [], selected: null, score: 0, total: 0, done: false },
 };
 
@@ -560,14 +567,30 @@ function render() {
       el("button", { class: "ctrl-btn", onclick: () => { state.cardIndex = (state.cardIndex + 1) % state.shuffled.length; state.flipped = false; render(); } }, "→"),
     ]);
 
-    const pinyinToggle = el("div", { style: "display:flex;justify-content:center" },
+    const pinyinToggle = el("div", { style: "display:flex;justify-content:center;margin-bottom:18px;" },
       el("button", { class: "toggle-btn" + (state.showPinyin ? " active" : ""), onclick: () => { state.showPinyin = !state.showPinyin; render(); } },
         state.showPinyin ? "🔤 Ocultar Pinyin" : "🔤 Mostrar Pinyin")
     );
 
+    // BARRA SELECTORA DE VELOCIDAD DINÁMICA
+    const speedLabel = el("span", { style: "font-size:12px;color:#c084fc;font-weight:700;" }, state.voiceSpeed.toFixed(2) + "x");
+    const speedSlider = el("div", { style: "display:flex;align-items:center;justify-content:center;gap:12px;margin:14px auto;background:rgba(255,255,255,0.03);border:1px solid rgba(192,132,252,0.15);padding:10px 16px;border-radius:12px;max-width:320px;" }, [
+      el("span", { style: "font-size:12px;color:rgba(240,232,254,0.5)" }, "Velocidad:"),
+      el("input", {
+        type: "range", min: "0.5", max: "1", step: "0.05", value: state.voiceSpeed,
+        style: "flex:1;cursor:pointer;accent-color:#c084fc;",
+        oninput: (e) => {
+          state.voiceSpeed = parseFloat(e.target.value);
+          speedLabel.innerText = state.voiceSpeed.toFixed(2) + "x";
+        }
+      }),
+      speedLabel
+    ]);
+
     main.appendChild(card);
     main.appendChild(controls);
     main.appendChild(pinyinToggle);
+    main.appendChild(speedSlider); // Inyectamos la barra selectora al final
 
     app.appendChild(header("Tarjetas Flash", (state.cardIndex + 1) + "/" + state.shuffled.length, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
