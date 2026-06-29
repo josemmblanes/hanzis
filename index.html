@@ -105,7 +105,6 @@
     text-align: center;
     cursor: pointer;
     transition: all 0.3s;
-    margin-bottom: 20px;
     min-height: 210px;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
   }
@@ -221,7 +220,7 @@
     border-radius: 14px; padding: 11px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 9px;
   }
   .word-row.reinforced { border-color: rgba(192,132,252,0.4); }
-  .word-course-tag { min-width: 50px; font-size: 10px; color: rgba(240,232,254,0.35); text-align: center; }
+  .word-course-tag { min-width: 60px; font-size: 11px; color: rgba(192,132,252,0.85); font-weight: 700; text-align: center; letter-spacing: 0.5px; }
   .word-hanzi { font-size: 26px; display: flex; flex-wrap: wrap; min-width: 70px; justify-content: center; }
   .word-info { flex: 1; }
   .word-pinyin { color: #c084fc; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
@@ -246,7 +245,6 @@
 <div id="app"></div>
 
 <script>
-// SECCIÓN MODIFICADA: Ahora incluye los 4 archivos JSON con los nombres solicitados
 const COURSE_FILES = [
   { id: "HSK1",   file: "data/HSK1.json",   label: "Curso 1" },
   { id: "HSK2",   file: "data/HSK2.json",   label: "Curso 2" },
@@ -254,13 +252,23 @@ const COURSE_FILES = [
   { id: "HSK3_2", file: "data/HSK3_2.json", label: "Curso 3 下" }
 ];
 
+// Mapeo para transformar el ID del archivo interno al nivel real expuesto en la interfaz
+const COURSE_LEVEL_LABELS = {
+  "HSK1": "HSK 1",
+  "HSK2": "HSK 2",
+  "HSK3_1": "HSK 3",
+  "HSK3_2": "HSK 3"
+};
+
 const TONE_MAP = {
   'ā':1,'ē':1,'ī':1,'ō':1,'ū':1,'ǖ':1,
   'á':2,'é':2,'í':2,'ó':2,'ú':2,'ǘ':2,
   'ǎ':3,'ě':3,'ǐ':3,'ǒ':3,'ǔ':3,'ǚ':3,
   'à':4,'è':4,'ì':4,'ò':4,'ù':4,'ǜ':4,
 };
-const TONE_COLORS = { "1":"#e74c3c","2":"#e67e22","3":"#27ae60","4":"#2980b9","0":"#a78bfa" };
+
+// MODIFICACIÓN: Tonos 1 y 2 ajustados según la petición (Rojo vivo y Amarillo/Ámbar cálido)
+const TONE_COLORS = { "1":"#ff2a2a","2":"#ffb000","3":"#27ae60","4":"#2980b9","0":"#a78bfa" };
 const TONE_LABELS = { "1":"1°","2":"2°","3":"3°","4":"4°","0":"N" };
 
 function getToneOfSyllable(syll) {
@@ -513,7 +521,6 @@ function coloredHanziEl(hanzi, tone, size) {
   return wrap;
 }
 
-/* Panel de control de voz de la página principal */
 function renderVoiceControls() {
   const selectVoz = el("select", {
     class: "voice-select",
@@ -786,8 +793,12 @@ function render() {
     filtered.forEach(word => {
       const idx = state.words.indexOf(word);
       const wgt = state.weights[idx] || 1;
+      
+      // MODIFICACIÓN: Obtenemos la etiqueta formateada estéticamente (ej: "HSK 3")
+      const realLevelText = COURSE_LEVEL_LABELS[word._course] || word._course;
+
       const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
-        el("div", { class: "word-course-tag" }, word._course),
+        el("div", { class: "word-course-tag" }, realLevelText), // Aquí se muestra ahora el HSK real a la izquierda
         coloredHanziEl(word.hanzi, word.tone, 26),
         el("div", { class: "word-info" }, [
           el("div", { class: "word-pinyin" }, word.pinyin),
