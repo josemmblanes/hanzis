@@ -205,9 +205,9 @@
   .opt-btn.wrong { background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #ff8080; }
 
   .tone-tags { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
-  .tone-tag { color: white; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700; }
+  .tone-tag { color: white; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; min-width: 28px; }
 
-  /* Browse */
+  /* Browse / Vocabulario Completo — Modificado basado en image_e5ef7e.png */
   .search-input {
     width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(192,132,252,0.3);
     border-radius: 12px; padding: 12px 16px; color: #f0e8fe; font-size: 14px;
@@ -216,21 +216,27 @@
   .search-input::placeholder { color: rgba(240,232,254,0.4); }
 
   .word-row {
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px; padding: 11px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 9px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; padding: 14px 20px; 
+    display: flex; align-items: center; justify-content: space-between; 
+    gap: 20px; margin-bottom: 10px; width: 100%;
   }
   .word-row.reinforced { border-color: rgba(192,132,252,0.4); }
-  .word-course-tag { min-width: 60px; font-size: 11px; color: rgba(192,132,252,0.85); font-weight: 700; text-align: center; letter-spacing: 0.5px; }
-  .word-hanzi { font-size: 26px; display: flex; flex-wrap: wrap; min-width: 70px; justify-content: center; }
-  .word-info { flex: 1; }
-  .word-pinyin { color: #c084fc; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-  .word-meaning { font-size: 11px; color: rgba(240,232,254,0.6); line-height: 1.4; }
-  .word-actions { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .weight-badge { font-size: 9px; color: #c084fc; background: rgba(192,132,252,0.15); border-radius: 4px; padding: 1px 5px; }
+  
+  .word-left-block { display: flex; align-items: center; gap: 24px; flex: 1; }
+  .word-course-tag { min-width: 65px; font-size: 14px; color: #b08bf8; font-weight: 700; text-align: left; }
+  .word-hanzi { font-size: 32px; display: inline-flex; align-items: center; justify-content: center; font-weight: 500; }
+  .word-pinyin { color: #c084fc; font-size: 15px; font-weight: 600; min-width: 60px; }
+  .word-meaning { font-size: 14px; color: rgba(240,232,254,0.7); flex: 1; }
+  
+  .word-right-block { display: flex; align-items: center; gap: 16px; }
+  .weight-badge { font-size: 10px; color: #c084fc; background: rgba(192,132,252,0.15); border-radius: 4px; padding: 2px 6px; font-weight: 700; }
   .play-icon-btn {
-    background: linear-gradient(135deg,#9333ea,#7c3aed); border: none; color: white;
-    border-radius: 10px; padding: 9px 11px; cursor: pointer; font-size: 15px;
+    background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; color: white;
+    border-radius: 12px; width: 44px; height: 44px; cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center; transition: transform 0.1s;
   }
+  .play-icon-btn:active { transform: scale(0.95); }
 
   .empty-state { text-align: center; color: rgba(240,232,254,0.4); padding: 40px 20px; font-size: 14px; }
   .footer-link {
@@ -252,7 +258,6 @@ const COURSE_FILES = [
   { id: "HSK3_2", file: "data/HSK3_2.json", label: "Curso 3 下" }
 ];
 
-// Mapeo para transformar el ID del archivo interno al nivel real expuesto en la interfaz
 const COURSE_LEVEL_LABELS = {
   "HSK1": "HSK 1",
   "HSK2": "HSK 2",
@@ -267,7 +272,6 @@ const TONE_MAP = {
   'à':4,'è':4,'ì':4,'ò':4,'ù':4,'ǜ':4,
 };
 
-// MODIFICACIÓN: Tonos 1 y 2 ajustados según la petición (Rojo vivo y Amarillo/Ámbar cálido)
 const TONE_COLORS = { "1":"#ff2a2a","2":"#ffb000","3":"#27ae60","4":"#2980b9","0":"#a78bfa" };
 const TONE_LABELS = { "1":"1°","2":"2°","3":"3°","4":"4°","0":"N" };
 
@@ -294,24 +298,14 @@ function computeTone(hanzi, pinyin) {
 
 function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
 
-/* ============================================================
-   SISTEMA DE VOZ AVANZADO (PROCESAMIENTO GLOBAL)
-   ============================================================ */
 let currentExternalAudio = null;
-
 let selectedVoiceType = localStorage.getItem("hanzi-voice-type") || "youdao";
 let selectedVoiceSpeed = parseFloat(localStorage.getItem("hanzi-voice-speed") || "1.0");
 
 function speak(text) {
   if (!text) return;
-  
-  if (typeof speechSynthesis !== 'undefined') {
-    speechSynthesis.cancel();
-  }
-  if (currentExternalAudio) {
-    currentExternalAudio.pause();
-    currentExternalAudio.currentTime = 0;
-  }
+  if (typeof speechSynthesis !== 'undefined') { speechSynthesis.cancel(); }
+  if (currentExternalAudio) { currentExternalAudio.pause(); currentExternalAudio.currentTime = 0; }
 
   if (selectedVoiceType === "youdao") {
     const url = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
@@ -324,33 +318,23 @@ function speak(text) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
     utterance.rate = selectedVoiceSpeed;
-
     const zhVoices = speechSynthesis.getVoices().filter(v => 
       v.lang.toLowerCase().startsWith('zh-cn') || 
       v.lang.toLowerCase().startsWith('zh_cn') ||
       v.lang.toLowerCase().includes('zh')
     );
-
     if (zhVoices.length > 0) {
-      if (selectedVoiceType === "fluida" && zhVoices[0]) {
-        utterance.voice = zhVoices[0];
-      } else if (selectedVoiceType === "energica" && zhVoices[1]) {
-        utterance.voice = zhVoices[1];
-      } else if (selectedVoiceType === "locutor" && zhVoices[2]) {
-        utterance.voice = zhVoices[2];
-      } else {
-        utterance.voice = zhVoices[0];
-      }
+      if (selectedVoiceType === "fluida" && zhVoices[0]) utterance.voice = zhVoices[0];
+      else if (selectedVoiceType === "energica" && zhVoices[1]) utterance.voice = zhVoices[1];
+      else if (selectedVoiceType === "locutor" && zhVoices[2]) utterance.voice = zhVoices[2];
+      else utterance.voice = zhVoices[0];
     }
-
     speechSynthesis.speak(utterance);
   }
 }
 
 if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = () => {
-    speechSynthesis.getVoices();
-  };
+  speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
 }
 
 const STORAGE_KEY = "hanzis-weights";
@@ -395,9 +379,7 @@ async function loadAllCourses() {
         entry.tone = computeTone(entry.hanzi, entry.pinyin);
       });
       results.push({ ...course, words: data });
-    } catch (e) {
-      continue;
-    }
+    } catch (e) { continue; }
   }
   return results;
 }
@@ -793,22 +775,23 @@ function render() {
     filtered.forEach(word => {
       const idx = state.words.indexOf(word);
       const wgt = state.weights[idx] || 1;
-      
-      // MODIFICACIÓN: Obtenemos la etiqueta formateada estéticamente (ej: "HSK 3")
       const realLevelText = COURSE_LEVEL_LABELS[word._course] || word._course;
 
+      // MODIFICACIÓN COMPLETA DE ALINEACIÓN SEGÚN image_e5ef7e.png
       const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
-        el("div", { class: "word-course-tag" }, realLevelText), // Aquí se muestra ahora el HSK real a la izquierda
-        coloredHanziEl(word.hanzi, word.tone, 26),
-        el("div", { class: "word-info" }, [
+        // Bloque Izquierdo: Nivel HSK -> Hanzi -> Pinyin -> Significado
+        el("div", { class: "word-left-block" }, [
+          el("div", { class: "word-course-tag" }, realLevelText),
+          coloredHanziEl(word.hanzi, word.tone, 32),
           el("div", { class: "word-pinyin" }, word.pinyin),
-          el("div", { class: "word-meaning" }, word.meaning),
+          el("div", { class: "word-meaning" }, word.meaning)
+        ]),
+        // Bloque Derecho: Badge de tono -> Peso (si aplica) -> Botón de audio
+        el("div", { class: "word-right-block" }, [
           toneTagsEl(word.tone),
-        ]),
-        el("div", { class: "word-actions" }, [
           wgt > 1 ? el("span", { class: "weight-badge" }, "×" + wgt) : null,
-          el("button", { class: "play-icon-btn", onclick: () => speak(word.hanzi) }, "🔊"),
-        ]),
+          el("button", { class: "play-icon-btn", onclick: () => speak(word.hanzi) }, "🔊")
+        ])
       ]);
       list.appendChild(row);
     });
