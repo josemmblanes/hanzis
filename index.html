@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Hanzis · Repaso de vocabulario chino</title>
+<!-- Librería para la animación de trazos -->
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -228,7 +229,6 @@
   .word-top-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
   .word-course-tag { font-size: 14px; color: #b08bf8; font-weight: 700; white-space: nowrap; }
   
-  /* Ajuste para que el contenedor Hanzi sea clicable con buen tamaño */
   .word-hanzi { font-size: 32px; display: inline-flex; align-items: center; justify-content: center; font-weight: 500; line-height: 1.1; cursor: pointer; }
   .word-pinyin { color: #c084fc; font-size: 15px; font-weight: 600; white-space: nowrap; }
   .word-meaning { font-size: 14px; color: rgba(240,232,254,0.7); line-height: 1.4; word-break: break-word; }
@@ -242,7 +242,7 @@
   }
   .play-icon-btn:active { transform: scale(0.95); }
 
-  /* NUEVO: Modal estilizado de trazos (Hanzi Writer) */
+  /* Modal de Trazos (Hanzi Writer) */
   .writer-modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(15, 7, 30, 0.85); backdrop-filter: blur(8px);
@@ -259,7 +259,6 @@
   .writer-modal-title { font-size: 16px; font-weight: 700; color: #c084fc; }
   .writer-close-btn { background: transparent; border: none; color: rgba(240,232,254,0.5); font-size: 22px; cursor: pointer; }
   
-  /* Selector de pestañas para palabras compuestas (varios caracteres) */
   .writer-tabs { display: flex; gap: 6px; width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: center; }
   .writer-tab {
     background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
@@ -267,7 +266,6 @@
   }
   .writer-tab.active { background: rgba(192,132,252,0.25); border-color: #c084fc; color: white; font-weight: 700; }
 
-  /* Lienzo del SVG */
   .writer-canvas-holder {
     background: #190a35; border: 1px solid rgba(192,132,252,0.2); border-radius: 16px;
     width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;
@@ -285,12 +283,36 @@
     border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 11px; display: block; margin: 16px auto 0 auto;
   }
   .warning-text { font-size: 12px; color: rgba(192,132,252,0.7); margin-top: 4px; text-align: center; }
+
+  /* Animación temblor para contraseña incorrecta */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
 </style>
 </head>
 <body>
 
+<!-- Pantalla de Bloqueo Obligatoria por Defecto -->
+<div id="lock-screen" style="position:fixed; top:0; left:0; right:0; bottom:0; background:#15071e; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; font-family:-apple-system, sans-serif; color:#f0e8fe;">
+  <div style="background:#22123b; border:1px solid rgba(192,132,252,0.4); border-radius:24px; padding:30px; width:100%; max-width:340px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align:center;">
+    <div style="font-size:40px; margin-bottom:10px;">🔐</div>
+    <h2 style="font-size:18px; margin-bottom:8px; color:#c084fc;">Aplicación Protegida</h2>
+    <p style="font-size:13px; color:rgba(240,232,254,0.6); margin-bottom:20px;">Introduce la clave de acceso para continuar.</p>
+    
+    <input type="password" id="app-password" placeholder="Contraseña" style="width:100%; background:rgba(255,255,255,0.07); border:1px solid rgba(192,132,252,0.3); border-radius:12px; padding:12px; color:#f0e8fe; font-size:14px; margin-bottom:14px; text-align:center; outline:none;" onkeydown="if(event.key==='Enter') checkAccessPassword()">
+    
+    <button onclick="checkAccessPassword()" style="background:linear-gradient(135deg,#c084fc,#9333ea); border:none; color:#190a35; border-radius:12px; padding:12px; font-weight:800; font-size:14px; cursor:pointer; width:100%; margin-bottom:16px;">Entrar</button>
+    
+    <a href="mailto:tu-correo@email.com?subject=Solicitud de clave - App Chino&body=Hola, me gustaría solicitar una clave para usar la app de vocabulario." style="color:#b08bf8; font-size:12px; text-decoration:none; display:inline-block; border-bottom:1px dashed rgba(192,132,252,0.5); padding-bottom:2px;">Solicitar clave por correo</a>
+    <div id="lock-error" style="color:#f43f5e; font-size:12px; margin-top:12px; display:none;">❌ Clave incorrecta</div>
+  </div>
+</div>
+
 <div id="app"></div>
 
+<!-- Estructura del Modal de Trazos -->
 <div id="writer-overlay" class="writer-modal-overlay" onclick="closeStrokeModal(event)">
   <div class="writer-modal" onclick="event.stopPropagation()">
     <div class="writer-modal-header">
@@ -303,12 +325,42 @@
     </div>
     <div class="writer-controls">
       <button class="writer-btn writer-btn-anim" onclick="triggerStrokeAnim()">🎬 Animar</button>
-      <button class="writer-btn writer-btn-quiz" onclick="triggerStrokeQuiz()">✍ Practice</button>
+      <button class="writer-btn writer-btn-quiz" onclick="triggerStrokeQuiz()">✍ Practicar</button>
     </div>
   </div>
 </div>
 
 <script>
+// Hash SHA-256 definitivo obtenido para la clave "Escritura"
+const CONFIG_HASH = "53fd99edb999f5db72983305eadb42b54eb7316b0793bed6200a9080fc184e2d"; 
+
+async function hashPassword(string) {
+  const utf8 = new TextEncoder().encode(string);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function checkAccessPassword() {
+  const input = document.getElementById("app-password").value;
+  const hashedInput = await hashPassword(input);
+  const errorDiv = document.getElementById("lock-error");
+  
+  if (hashedInput === CONFIG_HASH) {
+    localStorage.setItem("app-unlocked", "true");
+    document.getElementById("lock-screen").style.display = "none";
+    // Solo cuando la clave es correcta se cargan los cursos e inicializa la app por seguridad
+    if (state.screen === "locked") {
+      init();
+    }
+  } else {
+    errorDiv.style.display = "block";
+    errorDiv.style.animation = "none";
+    void errorDiv.offsetWidth; // Truco para resetear la animación CSS en la interfaz
+    errorDiv.style.animation = "shake 0.2s ease-in-out 2";
+  }
+}
+
 const COURSE_FILES = [
   { id: "HSK1",   file: "data/HSK1.json",   label: "Curso 1" },
   { id: "HSK2",   file: "data/HSK2.json",   label: "Curso 2" },
@@ -320,13 +372,8 @@ const COURSE_FILES = [
 ];
 
 const COURSE_LEVEL_LABELS = {
-  "HSK1": "HSK 1",
-  "HSK2": "HSK 2",
-  "HSK3_1": "HSK 3",
-  "HSK3_2": "HSK 3",
-  "HSK4_1": "HSK 4",
-  "HSK4_2": "HSK 4",
-  "HSK4_3": "HSK 4"
+  "HSK1": "HSK 1", "HSK2": "HSK 2", "HSK3_1": "HSK 3", "HSK3_2": "HSK 3",
+  "HSK4_1": "HSK 4", "HSK4_2": "HSK 4", "HSK4_3": "HSK 4"
 };
 
 const TONE_MAP = {
@@ -339,9 +386,7 @@ const TONE_MAP = {
 const TONE_COLORS = { "1":"#ff2a2a","2":"#ffb000","3":"#27ae60","4":"#2980b9","0":"#a78bfa" };
 
 function getToneOfSyllable(syll) {
-  for (const ch of syll) {
-    if (TONE_MAP[ch] !== undefined) return TONE_MAP[ch];
-  }
+  for (const ch of syll) { if (TONE_MAP[ch] !== undefined) return TONE_MAP[ch]; }
   return 0;
 }
 
@@ -412,8 +457,9 @@ function saveWeights(weights) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(weights)); } catch (e) {}
 }
 
+// Empezamos en estado "locked" de forma estricta
 const state = {
-  screen: "loading",        
+  screen: "locked",        
   allWords: [],              
   availableCourses: [],       
   selectedCourses: [],
@@ -448,6 +494,8 @@ async function loadAllCourses() {
 }
 
 async function init() {
+  state.screen = "loading";
+  render();
   state.persistedWeights = loadWeights();
   const courses = await loadAllCourses();
   state.availableCourses = courses;
@@ -522,13 +570,12 @@ function answerQuiz(optIdx) {
   }, 1600);
 }
 
-/* LÓGICA DE MANEJO DE HANZI WRITER (TRAZOS) */
+/* MANEJO DE TRAZOS (HANZI WRITER) */
 let currentWriterInstance = null;
 let currentActiveChar = "";
 
 function openStrokeModal(hanziString) {
   if (!hanziString) return;
-  // Filtrar solo caracteres chinos válidos aproximados (evitar signos de puntuación)
   const characters = hanziString.replace(/[^\u4e00-\u9fa5]/g, "").split("");
   if (characters.length === 0) return;
 
@@ -586,9 +633,7 @@ function triggerStrokeAnim() {
 }
 
 function triggerStrokeQuiz() {
-  if (currentWriterInstance) {
-    currentWriterInstance.quiz();
-  }
+  if (currentWriterInstance) { currentWriterInstance.quiz(); }
 }
 
 function el(tag, attrs = {}, children = []) {
@@ -668,6 +713,11 @@ function render() {
   const app = document.getElementById("app");
   app.innerHTML = "";
 
+  // Si la app está bloqueada, no renderizamos nada en el contenedor principal
+  if (state.screen === "locked") {
+    return;
+  }
+
   if (state.screen === "loading") {
     app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
       el("div", { style: "color:rgba(240,232,254,0.5);font-size:14px" }, "Cargando vocabulario…")
@@ -678,7 +728,7 @@ function render() {
   if (state.screen === "error") {
     app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
       el("div", { style: "color:rgba(240,232,254,0.6);font-size:14px;text-align:center" },
-        "No se pudo cargar ningún fichero de vocabulario. Revisa que existan en /data/ y que los nombres coincidan exactamente.")
+        "No se pudo cargar ningún fichero de vocabulario. Revisa la carpeta /data/.")
     ));
     return;
   }
@@ -710,7 +760,6 @@ function render() {
       list.appendChild(btn);
     });
     main.appendChild(list);
-
     main.appendChild(renderVoiceControls());
 
     const totalSel = state.allWords.filter(w => state.selectedCourses.includes(w._course)).length;
@@ -729,7 +778,7 @@ function render() {
       }
     }, state.selectedCourses.length === 0 ? "Elige al menos un curso" : `Continuar (${totalSel} palabras)`));
 
-    app.appendChild(header("Hanzis", state.allWords.length + " palabras totales"));
+    app.appendChild(header("Hanzis", state.allWords.length + " palabras"));
     app.appendChild(main);
     return;
   }
@@ -828,7 +877,7 @@ function render() {
           el("span", { style: "font-size:22px;color:rgba(240,232,254,0.4)" }, "/" + state.quiz.total),
         ]),
         reinforced > 0 ? el("div", { style: "background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);border-radius:12px;padding:10px 20px;font-size:13px;color:#c084fc" },
-          `${reinforced} palabra(s) con refuerzo guardado · seguirán apareciendo más, incluso si cierras la app`) : null,
+          `${reinforced} palabra(s) con refuerzo guardado`) : null,
         el("button", { class: "primary-btn", style: "max-width:300px", onclick: startQuiz }, "Otro intento"),
         el("button", { class: "footer-link", onclick: () => { state.screen = "menu"; render(); } }, "Menú"),
       ]));
@@ -860,18 +909,16 @@ function render() {
     }
     main.appendChild(card);
 
-    if (isAnswered || true) {
-      const grid = el("div", { class: "opt-grid" });
-      state.quiz.options.forEach((opt, i) => {
-        let cls = "opt-btn";
-        if (isAnswered) {
-          if (opt.hanzi === current.hanzi) cls += " correct";
-          else if (i === state.quiz.selected) cls += " wrong";
-        }
-        grid.appendChild(el("button", { class: cls, onclick: () => answerQuiz(i) }, opt.meaning));
-      });
-      main.appendChild(grid);
-    }
+    const grid = el("div", { class: "opt-grid" });
+    state.quiz.options.forEach((opt, i) => {
+      let cls = "opt-btn";
+      if (isAnswered) {
+        if (opt.hanzi === current.hanzi) cls += " correct";
+        else if (i === state.quiz.selected) cls += " wrong";
+      }
+      grid.appendChild(el("button", { class: cls, onclick: () => answerQuiz(i) }, opt.meaning));
+    });
+    main.appendChild(grid);
 
     app.appendChild(header("Quiz", "✓ " + state.quiz.score, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
@@ -924,7 +971,17 @@ function render() {
   }
 }
 
-init();
+// LÓGICA DE CONTROL DE ARRANQUE SEGURO
+document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("app-unlocked") === "true") {
+    const lock = document.getElementById("lock-screen");
+    if (lock) lock.style.display = "none";
+    init(); // El usuario ya se autenticó previamente, inicializamos los datos
+  } else {
+    // Si no está desbloqueado, no se hace un fetch de datos ni se procesa nada
+    render();
+  }
+});
 </script>
 </body>
 </html>
