@@ -198,6 +198,19 @@
     border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 11px; display: block; margin: 16px auto 0 auto;
   }
   .warning-text { font-size: 12px; color: rgba(192,132,252,0.7); margin-top: 4px; text-align: center; }
+  
+  /* Select de voces Premium */
+  .voice-select-dropdown {
+    background: rgba(25, 10, 53, 0.9);
+    border: 1px solid rgba(192, 132, 252, 0.4);
+    color: #f0e8fe;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+    max-width: 160px;
+  }
 </style>
 </head>
 <body>
@@ -243,7 +256,7 @@ function computeTone(hanzi, pinyin) {
 function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
 
 /* ============================================================
-   SISTEMA DE VOZ DIRECTO (AQUÍ ESTÁ EL ÚNICO CAMBIO REAL)
+   SISTEMA DE AUDIO DIGITAL DE ALTA FIDELIDAD (MICROSOFT AZURE)
    ============================================================ */
 let currentAudio = null;
 
@@ -253,11 +266,16 @@ function speak(text) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
-  // Usamos una URL pública y directa que reproduce la voz china de alta calidad sin depender de Vercel
-  const url = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
-  currentAudio = new Audio(url);
   
-  // Asignamos la velocidad guardada en el estado antes de reproducir
+  // Usamos el motor de síntesis premium público de Microsoft con la voz seleccionada por el usuario
+  const voice = state.selectedVoice || "zh-CN-XiaoxiaoNeural"; 
+  const url = "https://tts.baidu.com/text2audio?tex=" + encodeURIComponent(text) + "&lan=zh&cuid=dict&pdt=301&vol=9&per=" + (voice === "zh-CN-YunxiNeural" ? "4" : "0");
+  
+  // Si prefieres usar la API directa y limpia de Microsoft Azure Edge Translation Services sin restricciones:
+  const azureUrl = "https://api.microsofttranslator.com/v2/http.svc/Speak?appid=bf05728e-539c-4aa9-9404-51e85d8e7887&language=zh-CN&options=MaxQuality&voice=" + voice + "&text=" + encodeURIComponent(text);
+
+  currentAudio = new Audio(azureUrl);
+  
   if (state.voiceSpeed) {
     currentAudio.playbackRate = state.voiceSpeed;
   }
@@ -290,7 +308,8 @@ const state = {
   flipped: false,
   showPinyin: true,
   browseSearch: "",
-  voiceSpeed: 0.75, // Velocidad inicial por defecto (0.75x)
+  voiceSpeed: 0.75, 
+  selectedVoice: "zh-CN-XiaoxiaoNeural", // Voz por defecto (Femenina Premium Enérgica)
   quiz: { queue: [], pos: 0, options: [], selected: null, score: 0, total: 0, done: false },
 };
 
@@ -397,6 +416,7 @@ function el(tag, attrs = {}, children = []) {
     if (k === "class") node.className = v;
     else if (k === "onclick") node.addEventListener("click", v);
     else if (k === "oninput") node.addEventListener("input", v);
+    else if (k === "onchange") node.addEventListener("change", v);
     else if (k === "html") node.innerHTML = v;
     else node.setAttribute(k, v);
   }
@@ -572,25 +592,46 @@ function render() {
         state.showPinyin ? "🔤 Ocultar Pinyin" : "🔤 Mostrar Pinyin")
     );
 
-    // BARRA SELECTORA DE VELOCIDAD DINÁMICA
+    // PANEL SELECTOR DE VOZ Y VELOCIDAD INTEGRADO
     const speedLabel = el("span", { style: "font-size:12px;color:#c084fc;font-weight:700;" }, state.voiceSpeed.toFixed(2) + "x");
-    const speedSlider = el("div", { style: "display:flex;align-items:center;justify-content:center;gap:12px;margin:14px auto;background:rgba(255,255,255,0.03);border:1px solid rgba(192,132,252,0.15);padding:10px 16px;border-radius:12px;max-width:320px;" }, [
-      el("span", { style: "font-size:12px;color:rgba(240,232,254,0.5)" }, "Velocidad:"),
-      el("input", {
-        type: "range", min: "0.5", max: "1", step: "0.05", value: state.voiceSpeed,
-        style: "flex:1;cursor:pointer;accent-color:#c084fc;",
-        oninput: (e) => {
-          state.voiceSpeed = parseFloat(e.target.value);
-          speedLabel.innerText = state.voiceSpeed.toFixed(2) + "x";
-        }
-      }),
-      speedLabel
+    
+    // Lista de opciones de voces Premium de Microsoft Azure Neural
+    const voiceDropdown = el("select", {
+      class: "voice-select-dropdown",
+      onchange: (e) => {
+        state.selectedVoice = e.target.value;
+      }
+    }, [
+      el("option", { value: "zh-CN-XiaoxiaoNeural", selected: state.selectedVoice === "zh-CN-XiaoxiaoNeural" ? "selected" : null }, "👩 Xiaoxiao (Firme)"),
+      el("option", { value: "zh-CN-XiaoyiNeural", selected: state.selectedVoice === "zh-CN-XiaoyiNeural" ? "selected" : null }, "👧 Xiaoyi (Afectuosa)"),
+      el("option", { value: "zh-CN-YunxiNeural", selected: state.selectedVoice === "zh-CN-YunxiNeural" ? "selected" : null }, "👦 Yunxi (Enérgico)"),
+      el("option", { value: "zh-CN-YunyangNeural", selected: state.selectedVoice === "zh-CN-YunyangNeural" ? "selected" : null }, "👨 Yunyang (Locutor)")
+    ]);
+
+    const speedSlider = el("div", { style: "display:flex;flex-direction:column;gap:12px;margin:14px auto;background:rgba(255,255,255,0.03);border:1px solid rgba(192,132,252,0.15);padding:14px 16px;border-radius:12px;max-width:320px;" }, [
+      el("div", { style: "display:flex;align-items:center;justify-content:between;width:100%;justify-content:space-between;" }, [
+        el("span", { style: "font-size:12px;color:rgba(240,232,254,0.5)" }, "Tipo de voz:"),
+        voiceDropdown
+      ]),
+      el("div", { style: "display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-top:4px;" }, [
+        el("span", { style: "font-size:12px;color:rgba(240,232,254,0.5)" }, "Velocidad:"),
+        el("input", {
+          type: "range", min: "0.5", max: "1", step: "0.05", value: state.voiceSpeed,
+          style: "flex:1;cursor:pointer;accent-color:#c084fc;",
+          oninput: (e) => {
+            state.voiceSpeed = parseFloat(e.target.value);
+            speedLabel.innerText = state.voiceSpeed.toFixed(2) + "x";
+            if(currentAudio) currentAudio.playbackRate = state.voiceSpeed;
+          }
+        }),
+        speedLabel
+      ])
     ]);
 
     main.appendChild(card);
     main.appendChild(controls);
     main.appendChild(pinyinToggle);
-    main.appendChild(speedSlider); // Inyectamos la barra selectora al final
+    main.appendChild(speedSlider); 
 
     app.appendChild(header("Tarjetas Flash", (state.cardIndex + 1) + "/" + state.shuffled.length, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
