@@ -1,689 +1,410 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Hanzis · Repaso de vocabulario chino</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background: linear-gradient(135deg, #1a0b2e, #2d1654, #190a35);
-    color: #f0e8fe;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  #app { width: 100%; max-width: 700px; display: flex; flex-direction: column; flex: 1; }
-
-  .header {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(192,132,252,0.2);
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    position: sticky;
-    top: 0;
-  }
-  .logo { font-size: 20px; font-weight: 700; color: #c084fc; letter-spacing: 2px; text-shadow: 0 0 20px rgba(192,132,252,0.5); }
-  .back-btn {
-    background: rgba(192,132,252,0.15);
-    border: 1px solid rgba(192,132,252,0.4);
-    color: #c084fc;
-    border-radius: 8px;
-    padding: 6px 14px;
-    cursor: pointer;
-    font-size: 13px;
-  }
-  .main { flex: 1; width: 100%; padding: 28px 20px 48px; box-sizing: border-box; }
-
-  /* Selección de cursos */
-  .course-btn {
-    width: 100%; max-width: 380px;
-    background: rgba(255,255,255,0.04);
-    border: 2px solid rgba(255,255,255,0.12);
-    border-radius: 16px;
-    padding: 18px 22px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between;
-    color: #f0e8fe;
-    transition: all 0.2s;
-    margin: 0 auto 12px auto;
-  }
-  .course-btn.active { background: rgba(192,132,252,0.15); border-color: #c084fc; }
-  .checkbox {
-    width: 24px; height: 24px; border-radius: 6px;
-    border: 2px solid rgba(255,255,255,0.3);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; color: #190a35; font-weight: 900;
-    margin-right: 14px;
-  }
-  .checkbox.active { background: #c084fc; border-color: #c084fc; }
-
-  .menu-btn {
-    width: 100%; max-width: 380px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(192,132,252,0.25);
-    border-radius: 16px;
-    padding: 18px 22px;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 16px;
-    text-align: left; color: #f0e8fe;
-    margin: 0 auto 12px auto;
-  }
-  .menu-btn:hover { background: rgba(192,132,252,0.1); border-color: rgba(192,132,252,0.6); }
-  .menu-icon { font-size: 32px; }
-  .menu-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
-  .menu-desc { font-size: 12px; color: rgba(240,232,254,0.45); }
-
-  .primary-btn {
-    background: linear-gradient(135deg,#c084fc,#9333ea);
-    border: none; color: #190a35;
-    border-radius: 14px; padding: 16px 40px;
-    font-weight: 800; font-size: 16px;
-    cursor: pointer; width: 100%; max-width: 380px;
-    display: block; margin: 12px auto 0 auto;
-  }
-  .primary-btn:disabled { background: rgba(255,255,255,0.05); color: rgba(240,232,254,0.3); cursor: not-allowed; }
-
-  .center-col { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-  .hero-emoji { font-size: 56px; margin-bottom: 6px; text-align: center; }
-  .hero-label { font-size: 20px; font-weight: 300; color: rgba(240,232,254,0.8); letter-spacing: 1px; text-align: center; }
-  .hero-sub { font-size: 12px; color: rgba(240,232,254,0.4); margin-top: 4px; text-align: center; }
-
-  /* Flashcard */
-  .flashcard {
-    background: linear-gradient(135deg,rgba(192,132,252,0.1),rgba(255,255,255,0.03));
-    border: 1px solid rgba(192,132,252,0.35);
-    border-radius: 24px;
-    padding: 40px 28px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-bottom: 20px;
-    min-height: 210px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-  }
-  .flashcard.flipped { background: linear-gradient(135deg,rgba(39,174,96,0.18),rgba(39,174,96,0.04)); border-color: rgba(39,174,96,0.5); }
-  .hanzi-big { font-size: 56px; line-height: 1; }
-  .pinyin-text { font-size: 18px; color: #c084fc; letter-spacing: 2px; }
-  .meaning-text { font-size: 14px; color: rgba(240,232,254,0.9); margin-top: 4px; text-align: center; max-width: 480px; line-height: 1.5; }
-  .hint-text { font-size: 11px; color: rgba(240,232,254,0.3); margin-top: 4px; }
-
-  .row-controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 14px; }
-  .ctrl-btn {
-    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
-    color: #f0e8fe; border-radius: 12px; padding: 12px 18px; cursor: pointer; font-size: 18px;
-  }
-  .speak-btn {
-    background: linear-gradient(135deg,#9333ea,#7c3aed); border: none; color: white;
-    border-radius: 12px; padding: 12px 28px; cursor: pointer; font-size: 15px; font-weight: 700; flex: 1;
-  }
-  .toggle-btn {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-    color: #f0e8fe; border-radius: 10px; padding: 8px 16px; cursor: pointer; font-size: 13px;
-  }
-  .toggle-btn.active { background: rgba(192,132,252,0.15); border-color: rgba(192,132,252,0.5); }
-
-  /* Quiz */
-  .progress-text { font-size: 11px; color: rgba(240,232,254,0.4); margin-bottom: 5px; text-align: center; }
-  .progress-bar-bg { background: rgba(255,255,255,0.07); border-radius: 8px; height: 5px; margin-bottom: 16px; }
-  .progress-bar-fill { background: linear-gradient(90deg,#c084fc,#9333ea); border-radius: 8px; height: 5px; transition: width 0.4s; }
-
-  .quiz-card {
-    background: rgba(192,132,252,0.06);
-    border: 1px solid rgba(192,132,252,0.25);
-    border-radius: 20px;
-    padding: 24px 20px;
-    text-align: center;
-    margin-bottom: 20px;
-    transition: border-color 0.3s;
-  }
-  .quiz-card.correct { border-color: rgba(39,174,96,0.6); }
-  .quiz-card.wrong { border-color: rgba(231,76,60,0.5); }
-
-  .big-play-btn {
-    background: linear-gradient(135deg,#9333ea,#7c3aed); border: none; color: white;
-    border-radius: 50%; width: 76px; height: 76px; cursor: pointer; font-size: 26px;
-    display: flex; align-items: center; justify-content: center; margin: 0 auto;
-    box-shadow: 0 0 28px rgba(147,51,234,0.5);
-  }
-
-  .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .opt-btn {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: #f0e8fe;
-    border-radius: 14px; padding: 14px 10px; cursor: pointer; font-size: 13px; text-align: center;
-    transition: all 0.3s; font-weight: 500; line-height: 1.4; min-height: 64px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .opt-btn.correct { background: rgba(39,174,96,0.2); border-color: #27ae60; color: #5dfc8a; }
-  .opt-btn.wrong { background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #ff8080; }
-
-  .tone-tags { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
-  .tone-tag { color: white; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700; }
-
-  /* Browse */
-  .search-input {
-    width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(192,132,252,0.3);
-    border-radius: 12px; padding: 12px 16px; color: #f0e8fe; font-size: 14px;
-    box-sizing: border-box; margin-bottom: 14px; outline: none;
-  }
-  .search-input::placeholder { color: rgba(240,232,254,0.4); }
-
-  .word-row {
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px; padding: 11px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 9px;
-  }
-  .word-row.reinforced { border-color: rgba(192,132,252,0.4); }
-  .word-course-tag { min-width: 50px; font-size: 10px; color: rgba(240,232,254,0.35); text-align: center; }
-  .word-hanzi { font-size: 26px; display: flex; flex-wrap: wrap; min-width: 70px; justify-content: center; }
-  .word-info { flex: 1; }
-  .word-pinyin { color: #c084fc; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-  .word-meaning { font-size: 11px; color: rgba(240,232,254,0.6); line-height: 1.4; }
-  .word-actions { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .weight-badge { font-size: 9px; color: #c084fc; background: rgba(192,132,252,0.15); border-radius: 4px; padding: 1px 5px; }
-  .play-icon-btn {
-    background: linear-gradient(135deg,#9333ea,#7c3aed); border: none; color: white;
-    border-radius: 10px; padding: 9px 11px; cursor: pointer; font-size: 15px;
-  }
-
-  .empty-state { text-align: center; color: rgba(240,232,254,0.4); padding: 40px 20px; font-size: 14px; }
-  .footer-link {
-    background: transparent; border: 1px solid rgba(255,255,255,0.1); color: rgba(240,232,254,0.3);
-    border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 11px; display: block; margin: 16px auto 0 auto;
-  }
-  .warning-text { font-size: 12px; color: rgba(192,132,252,0.7); margin-top: 4px; text-align: center; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjetas Flash de Chino</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a0633 0%, #3d1466 100%);
+            min-height: 100vh;
+            color: #f3f4f6;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .flashcard {
+            perspective: 1000px;
+        }
+        .flashcard-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+        /* Custom scrollbar para el menú lateral */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(26, 6, 51, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(147, 51, 234, 0.5);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(147, 51, 234, 0.8);
+        }
+    </style>
 </head>
-<body>
+<body class="flex h-screen overflow-hidden">
 
-<div id="app"></div>
+    <div id="sidebar" class="w-80 bg-[#140426]/90 backdrop-blur-md border-r border-purple-900/40 p-6 flex flex-col h-full z-20 transition-transform duration-300">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
+                <i data-lucide="languages" class="text-purple-400"></i> Hanzis
+            </h1>
+        </div>
+        
+        <div class="mb-6">
+            <label class="text-xs font-semibold text-purple-300 uppercase tracking-wider block mb-2">Ficheros de Vocabulario</label>
+            <div id="vocab-lists" class="space-y-2 overflow-y-auto flex-1 pr-1 max-h-[calc(100vh-200px)]">
+                <div class="text-sm text-purple-300/70 p-3 italic">Buscando vocabularios...</div>
+            </div>
+        </div>
 
-<script>
-const COURSE_FILES = [
-  { id: "HSK1",   file: "data/HSK1.json",   label: "Curso 1" },
-  { id: "HSK2",   file: "data/HSK2.json",   label: "Curso 2" }
-];
+        <div class="mt-auto pt-4 border-t border-purple-950 text-center text-xs text-purple-400/50">
+            v3.0 • Raíz limpia & Audio Nativo
+        </div>
+    </div>
 
-const TONE_MAP = {
-  'ā':1,'ē':1,'ī':1,'ō':1,'ū':1,'ǖ':1,
-  'á':2,'é':2,'í':2,'ó':2,'ú':2,'ǘ':2,
-  'ǎ':3,'ě':3,'ǐ':3,'ǒ':3,'ǔ':3,'ǚ':3,
-  'à':4,'è':4,'ì':4,'ò':4,'ù':4,'ǜ':4,
-};
-const TONE_COLORS = { "1":"#e74c3c","2":"#e67e22","3":"#27ae60","4":"#2980b9","0":"#a78bfa" };
-const TONE_LABELS = { "1":"1°","2":"2°","3":"3°","4":"4°","0":"N" };
+    <div class="flex-1 flex flex-col h-full relative">
+        <header class="p-4 flex items-center justify-between md:justify-end border-b border-purple-900/20 bg-[#1a0633]/40 backdrop-blur-sm">
+            <button id="toggle-sidebar" class="p-2 rounded-lg bg-purple-900/30 border border-purple-500/30 text-purple-300 hover:bg-purple-900/50 md:hidden">
+                <i data-lucide="menu"></i>
+            </button>
+            <div class="text-sm text-purple-300 bg-purple-950/60 px-4 py-1.5 rounded-full border border-purple-800/30" id="current-list-indicator">
+                Selecciona un nivel
+            </div>
+        </header>
 
-function getToneOfSyllable(syll) {
-  for (const ch of syll) {
-    if (TONE_MAP[ch] !== undefined) return TONE_MAP[ch];
-  }
-  return 0;
-}
+        <main class="flex-1 flex flex-col items-center justify-center p-4 md:p-8 max-w-4xl mx-auto w-full">
+            
+            <div id="status-view" class="text-center p-8 max-w-md hidden">
+                <div id="status-icon" class="mb-4 text-purple-400 flex justify-center"></div>
+                <p id="status-message" class="text-lg text-purple-200 font-medium"></p>
+            </div>
 
-function computeTone(hanzi, pinyin) {
-  const clean = (pinyin || "").replace(/[?？！!…,，.。]/g, "").trim();
-  const syllables = clean.split(/\s+/).filter(Boolean);
-  const nChars = (hanzi || "").length;
-  let tones = syllables.map(getToneOfSyllable);
-  if (tones.length === 0) tones = [0];
-  if (tones.length < nChars) {
-    while (tones.length < nChars) tones.push(tones[tones.length - 1]);
-  } else if (tones.length > nChars && nChars > 0) {
-    tones = tones.slice(0, nChars);
-  }
-  return tones.join("-");
-}
+            <div id="flashcard-view" class="w-full flex flex-col items-center space-y-6 hidden">
+                
+                <div class="w-full flex justify-between items-center px-2 text-sm text-purple-300">
+                    <span class="font-medium bg-purple-950/40 px-3 py-1 rounded-full border border-purple-900/30" id="card-counter">0 / 0</span>
+                    <span class="text-xs uppercase tracking-wider text-purple-400 font-semibold" id="level-tag">HSK</span>
+                </div>
 
-function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
+                <div class="flashcard w-full aspect-[4/3] md:aspect-[16/10] max-h-[450px] cursor-pointer" onclick="toggleFlip()">
+                    <div id="card-inner" class="flashcard-inner w-full h-full relative">
+                        
+                        <div class="flashcard-front absolute inset-0 bg-gradient-to-b from-[#250c46] to-[#16052b] border border-purple-500/20 shadow-2xl flex flex-col items-center justify-center p-6 text-center">
+                            <span id="front-hanzi" class="text-7xl md:text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-teal-300 to-emerald-400 filter drop-shadow-[0_4px_12px_rgba(45,212,191,0.2)] mb-4"></span>
+                            <span id="front-pinyin" class="text-2xl md:text-3xl font-medium text-purple-200 tracking-wide transition-opacity duration-200"></span>
+                            <p class="text-xs text-purple-400/60 mt-8 absolute bottom-6 uppercase tracking-widest">Toca para ver el significado</p>
+                        </div>
 
-/* ============================================================
-   SISTEMA DE VOZ DIRECTO (AQUÍ ESTÁ EL ÚNICO CAMBIO REAL)
-   ============================================================ */
-let currentAudio = null;
+                        <div class="flashcard-back absolute inset-0 bg-gradient-to-b from-[#1e073b] to-[#0f021f] border border-purple-800/40 shadow-2xl flex flex-col items-center justify-center p-6 text-center">
+                            <span id="back-translations" class="text-2xl md:text-4xl font-semibold text-purple-100 max-w-xl leading-relaxed"></span>
+                            <p class="text-xs text-purple-500/60 mt-8 absolute bottom-6 uppercase tracking-widest">Toca para volver al carácter</p>
+                        </div>
 
-function speak(text) {
-  if (!text) return;
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
-  }
-  // Usamos una URL pública y directa que reproduce la voz china de alta calidad sin depender de Vercel
-  const url = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
-  currentAudio = new Audio(url);
-  currentAudio.play().catch(() => {});
-}
+                    </div>
+                </div>
 
-const STORAGE_KEY = "hanzis-weights";
+                <div class="w-full flex flex-col sm:flex-row items-center gap-4 pt-2">
+                    
+                    <button onclick="playCurrentAudio(event)" class="w-full sm:w-auto flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg shadow-purple-950/50 flex items-center justify-center gap-3 active:scale-[0.98] transition-all border border-purple-400/20 group">
+                        <i data-lucide="volume-2" class="w-5 h-5 animate-pulse group-hover:scale-110 transition-transform"></i>
+                        <span>Escuchar</span>
+                    </button>
 
-function loadWeights() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) { return {}; }
-}
-function saveWeights(weights) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(weights)); } catch (e) {}
-}
+                    <button onclick="togglePinyin(event)" id="btn-pinyin" class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-purple-950/40 hover:bg-purple-900/40 border border-purple-800/40 text-purple-300 font-medium text-sm flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="eye-off" class="w-4 h-4"></i>
+                        <span>Ocultar Pinyin</span>
+                    </button>
 
-const state = {
-  screen: "loading",        
-  allWords: [],              
-  availableCourses: [],       
-  selectedCourses: [],
-  words: [],                 
-  persistedWeights: {},      
-  weights: {},                
-  shuffled: [],
-  cardIndex: 0,
-  flipped: false,
-  showPinyin: true,
-  browseSearch: "",
-  quiz: { queue: [], pos: 0, options: [], selected: null, score: 0, total: 0, done: false },
-};
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <button onclick="navigateCard(-1, event)" class="flex-1 sm:flex-none p-4 rounded-2xl bg-purple-900/20 hover:bg-purple-900/40 border border-purple-800/30 text-purple-300 transition-all flex justify-center active:scale-95">
+                            <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                        </button>
+                        <button onclick="navigateCard(1, event)" class="flex-1 sm:flex-none p-4 rounded-2xl bg-purple-900/20 hover:bg-purple-900/40 border border-purple-800/30 text-purple-300 transition-all flex justify-center active:scale-95">
+                            <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                        </button>
+                    </div>
 
-function wordKey(w) { return w.hanzi + "|" + w.pinyin; }
+                </div>
 
-async function loadAllCourses() {
-  const results = [];
-  for (const course of COURSE_FILES) {
-    try {
-      const res = await fetch(course.file);
-      if (!res.ok) continue; 
-      const data = await res.json();
-      data.forEach(entry => {
-        entry._course = course.id;
-        entry.tone = computeTone(entry.hanzi, entry.pinyin);
-      });
-      results.push({ ...course, words: data });
-    } catch (e) {
-      continue;
-    }
-  }
-  return results;
-}
+            </div>
+        </main>
+    </div>
 
-async function init() {
-  state.persistedWeights = loadWeights();
-  const courses = await loadAllCourses();
-  state.availableCourses = courses;
-  state.allWords = courses.flatMap(c => c.words);
-  state.selectedCourses = courses.map(c => c.id); 
-  state.screen = state.availableCourses.length ? "course-select" : "error";
-  render();
-}
+    <script>
+        // CONFIGURACIÓN: Lista automática de archivos esperados en tu carpeta /data/
+        const availableFiles = ['HSK1.json', 'HSK2.json', 'HSK3_1.json', 'HSK3_2.json', 'HSK4_1.json', 'HSK4_2.json', 'HSK4_3.json'];
+        
+        let currentVocabulary = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+        let showPinyin = true;
 
-function getFilteredWords() {
-  return state.allWords.filter(w => state.selectedCourses.includes(w._course));
-}
+        // Inicialización al cargar el DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            buildSidebarMenu();
+            initMobileSidebar();
+            
+            // Cargar automáticamente el primer archivo de la lista por defecto
+            loadVocabularyFile(availableFiles[0]);
+        });
 
-function buildQueue(words, weights) {
-  const queue = [];
-  words.forEach((_, i) => {
-    const reps = Math.max(1, Math.min(weights[i] || 1, 5));
-    for (let r = 0; r < reps; r++) queue.push(i);
-  });
-  return queue.sort(() => Math.random() - 0.5);
-}
+        // Crear menú dinámico en el sidebar
+        function buildSidebarMenu() {
+            const container = document.getElementById('vocab-lists');
+            container.innerHTML = '';
 
-function genOptions(words, idx) {
-  const word = words[idx];
-  const pool = words.filter(w => w.hanzi !== word.hanzi);
-  const wrong = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
-  return [...wrong, word].sort(() => Math.random() - 0.5);
-}
-
-function startQuiz() {
-  const words = state.words;
-  const len = Math.min(20, words.length);
-  const q = buildQueue(words, state.weights).slice(0, len);
-  state.quiz = { queue: q, pos: 0, options: genOptions(words, q[0]), selected: null, score: 0, total: 0, done: false };
-  state.screen = "quiz";
-  render();
-}
-
-function answerQuiz(optIdx) {
-  if (state.quiz.selected !== null) return;
-  const words = state.words;
-  const wordIdx = state.quiz.queue[state.quiz.pos];
-  const current = words[wordIdx];
-  const opt = state.quiz.options[optIdx];
-  const correct = opt.hanzi === current.hanzi;
-  state.quiz.selected = optIdx;
-
-  if (correct) {
-    speak(current.hanzi);
-    state.quiz.score++;
-    state.weights[wordIdx] = Math.max(1, (state.weights[wordIdx] || 1) - 1);
-  } else {
-    state.weights[wordIdx] = Math.min(5, (state.weights[wordIdx] || 1) + 2);
-  }
-  state.persistedWeights[wordKey(current)] = state.weights[wordIdx];
-  saveWeights(state.persistedWeights);
-
-  state.quiz.total++;
-  render();
-
-  const quizLen = Math.min(20, words.length);
-  setTimeout(() => {
-    const next = state.quiz.pos + 1;
-    if (next >= state.quiz.queue.length || state.quiz.total >= quizLen) {
-      state.quiz.done = true;
-    } else {
-      state.quiz.pos = next;
-      state.quiz.options = genOptions(words, state.quiz.queue[next]);
-      state.quiz.selected = null;
-    }
-    render();
-  }, 1600);
-}
-
-function el(tag, attrs = {}, children = []) {
-  const node = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (v === null || v === false || v === undefined) continue; 
-    if (k === "class") node.className = v;
-    else if (k === "onclick") node.addEventListener("click", v);
-    else if (k === "oninput") node.addEventListener("input", v);
-    else if (k === "html") node.innerHTML = v;
-    else node.setAttribute(k, v);
-  }
-  (Array.isArray(children) ? children : [children]).forEach(c => {
-    if (c == null) return;
-    if (typeof c === "string") node.appendChild(document.createTextNode(c));
-    else node.appendChild(c);
-  });
-  return node;
-}
-
-function header(title, rightText, backFn) {
-  return el("div", { class: "header" }, [
-    backFn ? el("button", { class: "back-btn", onclick: backFn }, "← Atrás") : el("span"),
-    el("span", { class: "logo" }, title),
-    el("span", { style: "font-size:13px;color:rgba(240,232,254,0.5)" }, rightText || ""),
-  ]);
-}
-
-function toneTagsEl(tone) {
-  const wrap = el("div", { class: "tone-tags" });
-  tone.split("-").forEach(t => {
-    wrap.appendChild(el("span", { class: "tone-tag", style: `background:${getToneColor(t)}` }, TONE_LABELS[t] || t));
-  });
-  return wrap;
-}
-
-function coloredHanziEl(hanzi, tone, size) {
-  const tones = tone.split("-");
-  const wrap = el("div", { class: "word-hanzi", style: `font-size:${size}px` });
-  hanzi.split("").forEach((ch, i) => {
-    wrap.appendChild(el("span", { style: `color:${getToneColor(tones[i] || tones[0])}` }, ch));
-  });
-  return wrap;
-}
-
-function render() {
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  if (state.screen === "loading") {
-    app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
-      el("div", { style: "color:rgba(240,232,254,0.5);font-size:14px" }, "Cargando vocabulario…")
-    ));
-    return;
-  }
-
-  if (state.screen === "error") {
-    app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
-      el("div", { style: "color:rgba(240,232,254,0.6);font-size:14px;text-align:center" },
-        "No se pudo cargar ningún fichero de vocabulario. Revisa que existan en /data/ y que los nombres coincidan exactamente.")
-    ));
-    return;
-  }
-
-  if (state.screen === "course-select") {
-    const main = el("div", { class: "main center-col" });
-    main.appendChild(el("div", { class: "hero-emoji" }, "选择"));
-    main.appendChild(el("div", { class: "hero-label" }, "¿Qué curso quieres repasar?"));
-    main.appendChild(el("div", { class: "hero-sub" }, "Puedes elegir uno o varios"));
-
-    const list = el("div", { style: "width:100%" });
-    state.availableCourses.forEach(c => {
-      const active = state.selectedCourses.includes(c.id);
-      const btn = el("button", {
-        class: "course-btn" + (active ? " active" : ""),
-        onclick: () => {
-          state.selectedCourses = active
-            ? state.selectedCourses.filter(x => x !== c.id)
-            : [...state.selectedCourses, c.id];
-          render();
+            availableFiles.forEach(file => {
+                const displayName = file.replace('.json', '').replace('_', ' ');
+                const button = document.createElement('button');
+                button.className = "vocab-btn w-full text-left p-3.5 rounded-xl text-sm font-medium transition-all flex items-center justify-between group bg-purple-950/20 text-purple-300 hover:bg-purple-900/30 border border-purple-900/30";
+                button.setAttribute('data-file', file);
+                button.innerHTML = `
+                    <span class="flex items-center gap-2.5">
+                        <i data-lucide="book-open" class="w-4 h-4 text-purple-400 group-hover:text-purple-300"></i>
+                        ${displayName}
+                    </span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-purple-400"></i>
+                `;
+                button.onclick = () => {
+                    // Remover estado activo de los demás botones
+                    document.querySelectorAll('.vocab-btn').forEach(btn => {
+                        btn.classList.remove('bg-purple-600', 'text-white', 'border-purple-400/30');
+                        btn.classList.add('bg-purple-950/20', 'text-purple-300', 'border-purple-900/30');
+                    });
+                    // Activar este botón
+                    button.classList.remove('bg-purple-950/20', 'text-purple-300', 'border-purple-900/30');
+                    button.classList.add('bg-purple-600', 'text-white', 'border-purple-400/30');
+                    
+                    loadVocabularyFile(file);
+                    
+                    // Cerrar barra lateral en móviles al seleccionar
+                    if (window.innerWidth < 768) {
+                        document.getElementById('sidebar').classList.add('-translate-x-full');
+                    }
+                };
+                container.appendChild(button);
+            });
+            lucide.createIcons();
         }
-      }, [
-        el("div", { style: "display:flex;align-items:center" }, [
-          el("div", { class: "checkbox" + (active ? " active" : "") }, active ? "✓" : ""),
-          el("div", { style: "font-size:17px;font-weight:700" }, c.label),
-        ]),
-        el("div", { style: "font-size:12px;color:rgba(240,232,254,0.45)" }, c.words.length + " palabras"),
-      ]);
-      list.appendChild(btn);
-    });
-    main.appendChild(list);
 
-    const totalSel = state.allWords.filter(w => state.selectedCourses.includes(w._course)).length;
-    main.appendChild(el("button", {
-      class: "primary-btn",
-      disabled: state.selectedCourses.length === 0 ? "disabled" : null,
-      onclick: () => {
-        if (state.selectedCourses.length === 0) return;
-        state.words = getFilteredWords();
-        state.shuffled = [...state.words].sort(() => Math.random() - 0.5);
-        state.weights = {};
-        state.words.forEach((w, i) => { state.weights[i] = state.persistedWeights[wordKey(w)] || 1; });
-        state.cardIndex = 0;
-        state.screen = "menu";
-        render();
-      }
-    }, state.selectedCourses.length === 0 ? "Elige al menos un curso" : `Continuar (${totalSel} palabras)`));
+        // Cargar un archivo JSON específico de la carpeta /data/
+        async function loadVocabularyFile(fileName) {
+            showStatus('loader', 'Cargando vocabulario...');
+            try {
+                // LLAMADA DIRECTA A LA RAÍZ REAL DE TU PROYECTO
+                const response = await fetch(`/data/${fileName}`);
+                if (!response.ok) throw new Error(`Status ${response.status}`);
+                
+                const data = await response.json();
+                if (!Array.isArray(data) || data.length === 0) throw new Error('El archivo está vacío o mal formateado');
+                
+                currentVocabulary = data;
+                currentIndex = 0;
+                isFlipped = false;
+                
+                document.getElementById('level-tag').innerText = fileName.replace('.json', '').replace('_', ' ');
+                document.getElementById('current-list-indicator').innerText = `Estudiando: ${fileName.replace('.json', '').replace('_', ' ')}`;
+                
+                hideStatus();
+                renderCard();
+                
+                // Marcar el botón correspondiente como activo visualmente
+                document.querySelectorAll('.vocab-btn').forEach(btn => {
+                    if(btn.getAttribute('data-file') === fileName) {
+                        btn.classList.remove('bg-purple-950/20', 'text-purple-300', 'border-purple-900/30');
+                        btn.classList.add('bg-purple-600', 'text-white', 'border-purple-400/30');
+                    }
+                });
 
-    app.appendChild(header("Hanzis", state.allWords.length + " palabras totales"));
-    app.appendChild(main);
-    return;
-  }
-
-  if (state.screen === "menu") {
-    const main = el("div", { class: "main center-col" });
-    main.appendChild(el("div", { style: "font-size:14px;color:#c084fc;letter-spacing:1px;text-align:center" },
-      state.selectedCourses.map(id => state.availableCourses.find(c => c.id === id)?.label).join(" · ")));
-    main.appendChild(el("div", { class: "hero-emoji" }, "中文"));
-    main.appendChild(el("div", { class: "hero-label" }, "Repaso de vocabulario"));
-
-    const items = [
-      { id: "flashcard", icon: "🎴", title: "Tarjetas Flash", desc: "Escucha y aprende con tarjetas" },
-      { id: "quiz", icon: "🎯", title: "Quiz con Refuerzo", desc: "Tus fallos se recuerdan entre sesiones" },
-      { id: "browse", icon: "📖", title: "Vocabulario completo", desc: "Explora y escucha todas las palabras" },
-    ];
-    items.forEach(item => {
-      main.appendChild(el("button", {
-        class: "menu-btn",
-        onclick: () => { state.screen = item.id; if (item.id === "quiz") startQuiz(); else render(); }
-      }, [
-        el("span", { class: "menu-icon" }, item.icon),
-        el("div", {}, [
-          el("div", { class: "menu-title" }, item.title),
-          el("div", { class: "menu-desc" }, item.desc),
-        ]),
-      ]));
-    });
-
-    const reinforced = Object.values(state.weights).filter(w => w > 1).length;
-    if (reinforced > 0) {
-      main.appendChild(el("div", { class: "warning-text" }, `⚠ ${reinforced} palabra(s) con refuerzo pendiente (guardado)`));
-    }
-
-    main.appendChild(el("button", {
-      class: "footer-link",
-      onclick: () => {
-        state.persistedWeights = {};
-        saveWeights({});
-        state.words.forEach((_, i) => { state.weights[i] = 1; });
-        render();
-      }
-    }, "Borrar progreso guardado"));
-
-    app.appendChild(header("Hanzis", state.words.length + " palabras", () => { state.screen = "course-select"; render(); }));
-    app.appendChild(main);
-    return;
-  }
-
-  if (state.screen === "flashcard") {
-    const word = state.shuffled[state.cardIndex];
-    const main = el("div", { class: "main" });
-    if (!word) { main.appendChild(el("div", { class: "empty-state" }, "No hay palabras.")); app.appendChild(main); return; }
-
-    const card = el("div", { class: "flashcard" + (state.flipped ? " flipped" : ""), onclick: () => { state.flipped = !state.flipped; render(); } });
-    card.appendChild(coloredHanziEl(word.hanzi, word.tone, 56));
-    if (state.showPinyin || state.flipped) card.appendChild(el("div", { class: "pinyin-text" }, word.pinyin));
-    if (state.flipped) {
-      card.appendChild(toneTagsEl(word.tone));
-      card.appendChild(el("div", { class: "meaning-text" }, word.meaning));
-    } else {
-      card.appendChild(el("div", { class: "hint-text" }, "Toca para ver el significado"));
-    }
-
-    const controls = el("div", { class: "row-controls" }, [
-      el("button", { class: "ctrl-btn", onclick: () => { state.cardIndex = (state.cardIndex - 1 + state.shuffled.length) % state.shuffled.length; state.flipped = false; render(); } }, "←"),
-      el("button", { class: "speak-btn", onclick: () => speak(word.hanzi) }, "🔊 Escuchar"),
-      el("button", { class: "ctrl-btn", onclick: () => { state.cardIndex = (state.cardIndex + 1) % state.shuffled.length; state.flipped = false; render(); } }, "→"),
-    ]);
-
-    const pinyinToggle = el("div", { style: "display:flex;justify-content:center" },
-      el("button", { class: "toggle-btn" + (state.showPinyin ? " active" : ""), onclick: () => { state.showPinyin = !state.showPinyin; render(); } },
-        state.showPinyin ? "🔤 Ocultar Pinyin" : "🔤 Mostrar Pinyin")
-    );
-
-    main.appendChild(card);
-    main.appendChild(controls);
-    main.appendChild(pinyinToggle);
-
-    app.appendChild(header("Tarjetas Flash", (state.cardIndex + 1) + "/" + state.shuffled.length, () => { state.screen = "menu"; render(); }));
-    app.appendChild(main);
-    return;
-  }
-
-  if (state.screen === "quiz") {
-    const main = el("div", { class: "main" });
-    const words = state.words;
-
-    if (state.quiz.done) {
-      const pct = state.quiz.total ? state.quiz.score / state.quiz.total : 0;
-      const emoji = pct >= 0.8 ? "🏆" : pct >= 0.5 ? "👍" : "💪";
-      const reinforced = Object.values(state.weights).filter(w => w > 1).length;
-      main.appendChild(el("div", { class: "center-col", style: "padding-top:48px" }, [
-        el("div", { style: "font-size:64px" }, emoji),
-        el("div", { style: "font-size:46px;font-weight:700;color:#c084fc" }, [
-          state.quiz.score.toString(),
-          el("span", { style: "font-size:22px;color:rgba(240,232,254,0.4)" }, "/" + state.quiz.total),
-        ]),
-        reinforced > 0 ? el("div", { style: "background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);border-radius:12px;padding:10px 20px;font-size:13px;color:#c084fc" },
-          `${reinforced} palabra(s) con refuerzo guardado · seguirán apareciendo más, incluso si cierras la app`) : null,
-        el("button", { class: "primary-btn", style: "max-width:300px", onclick: startQuiz }, "Otro intento"),
-        el("button", { class: "footer-link", onclick: () => { state.screen = "menu"; render(); } }, "Menú"),
-      ]));
-      app.appendChild(header("Resultado", "", null));
-      app.appendChild(main);
-      return;
-    }
-
-    const wordIdx = state.quiz.queue[state.quiz.pos];
-    const current = words[wordIdx];
-    const isAnswered = state.quiz.selected !== null;
-    const wasCorrect = isAnswered && state.quiz.options[state.quiz.selected].hanzi === current.hanzi;
-    const quizLen = Math.min(20, words.length);
-
-    main.appendChild(el("div", { class: "progress-text" }, `Pregunta ${state.quiz.total + 1} de ${quizLen}`));
-    main.appendChild(el("div", { class: "progress-bar-bg" },
-      el("div", { class: "progress-bar-fill", style: `width:${(state.quiz.total / quizLen) * 100}%` })));
-
-    const card = el("div", { class: "quiz-card" + (isAnswered ? (wasCorrect ? " correct" : " wrong") : "") });
-    if (!isAnswered) {
-      card.appendChild(el("div", { style: "font-size:11px;color:rgba(240,232,254,0.4);margin-bottom:16px;letter-spacing:1px" }, "Escucha y elige el significado"));
-      card.appendChild(el("button", { class: "big-play-btn", onclick: () => speak(current.hanzi) }, "🔊"));
-    } else {
-      card.appendChild(el("div", { style: "font-size:11px;color:rgba(240,232,254,0.4);letter-spacing:1px" }, wasCorrect ? "✓ Correcto" : "✗ Incorrecto"));
-      card.appendChild(coloredHanziEl(current.hanzi, current.tone, 50));
-      card.appendChild(el("div", { style: "font-size:16px;color:#c084fc" }, current.pinyin));
-      card.appendChild(toneTagsEl(current.tone));
-      card.appendChild(el("div", { style: "font-size:13px;color:rgba(240,232,254,0.8);line-height:1.4;max-width:480px" }, current.meaning));
-      card.appendChild(el("button", { style: "margin-top:4px;background:rgba(147,51,234,0.3);border:1px solid rgba(192,132,252,0.4);color:#c084fc;border-radius:8px;padding:5px 14px;cursor:pointer;font-size:12px", onclick: () => speak(current.hanzi) }, "🔊 Escuchar de nuevo"));
-    }
-    main.appendChild(card);
-
-    if (isAnswered || true) {
-      const grid = el("div", { class: "opt-grid" });
-      state.quiz.options.forEach((opt, i) => {
-        let cls = "opt-btn";
-        if (isAnswered) {
-          if (opt.hanzi === current.hanzi) cls += " correct";
-          else if (i === state.quiz.selected) cls += " wrong";
+            } catch (error) {
+                console.error("Error al cargar el fichero:", error);
+                showStatus('alert-circle', `No se pudo cargar ningún fichero de vocabulario. Revisa que existan en /data/ y que los nombres coincidan exactamente.`);
+            }
         }
-        grid.appendChild(el("button", { class: cls, onclick: () => answerQuiz(i) }, opt.meaning));
-      });
-      main.appendChild(grid);
-    }
 
-    app.appendChild(header("Quiz", "✓ " + state.quiz.score, () => { state.screen = "menu"; render(); }));
-    app.appendChild(main);
-    return;
-  }
+        // Renderizar la tarjeta flash actual
+        function renderCard() {
+            if (currentVocabulary.length === 0) return;
+            const item = currentVocabulary[currentIndex];
 
-  if (state.screen === "browse") {
-    const main = el("div", { class: "main" });
-    main.appendChild(el("input", {
-      class: "search-input", type: "text", placeholder: "Buscar por hanzi, pinyin o significado...",
-      value: state.browseSearch,
-      oninput: (e) => { state.browseSearch = e.target.value; render(); }
-    }));
+            // Resetear animación de giro
+            isFlipped = false;
+            document.getElementById('card-inner').classList.remove('flipped');
 
-    const q = state.browseSearch.toLowerCase();
-    const filtered = state.words.filter(w =>
-      w.hanzi.includes(state.browseSearch) ||
-      w.pinyin.toLowerCase().includes(q) ||
-      w.meaning.toLowerCase().includes(q)
-    );
+            // Inyectar datos en las caras
+            document.getElementById('front-hanzi').innerText = item.hanzi || '';
+            document.getElementById('front-pinyin').innerText = item.pinyin || '';
+            document.getElementById('front-pinyin').style.opacity = showPinyin ? '1' : '0';
+            
+            // Formatear traducciones múltiples si vienen separadas por comas
+            const translations = Array.isArray(item.translations) ? item.translations.join(', ') : (item.translations || item.translation || '');
+            document.getElementById('back-translations').innerText = translations;
 
-    const list = el("div");
-    filtered.forEach(word => {
-      const idx = state.words.indexOf(word);
-      const wgt = state.weights[idx] || 1;
-      const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
-        el("div", { class: "word-course-tag" }, word._course),
-        coloredHanziEl(word.hanzi, word.tone, 26),
-        el("div", { class: "word-info" }, [
-          el("div", { class: "word-pinyin" }, word.pinyin),
-          el("div", { class: "word-meaning" }, word.meaning),
-          toneTagsEl(word.tone),
-        ]),
-        el("div", { class: "word-actions" }, [
-          wgt > 1 ? el("span", { class: "weight-badge" }, "×" + wgt) : null,
-          el("button", { class: "play-icon-btn", onclick: () => speak(word.hanzi) }, "🔊"),
-        ]),
-      ]);
-      list.appendChild(row);
-    });
-    if (filtered.length === 0) list.appendChild(el("div", { class: "empty-state" }, "Sin resultados."));
-    main.appendChild(list);
+            // Actualizar contador
+            document.getElementById('card-counter').innerText = `${currentIndex + 1} / ${currentVocabulary.length}`;
+            
+            // Auto-reproducir audio nativo al cambiar de tarjeta (Opcional, muy útil)
+            setTimeout(() => { playCurrentAudio(); }, 100);
+        }
 
-    app.appendChild(header("Vocabulario", filtered.length.toString(), () => { state.screen = "menu"; render(); }));
-    app.appendChild(main);
-    return;
-  }
-}
+        // Girar la tarjeta
+        function toggleFlip() {
+            isFlipped = !isFlipped;
+            const inner = document.getElementById('card-inner');
+            if (isFlipped) {
+                inner.classList.add('flipped');
+            } else {
+                inner.classList.remove('flipped');
+            }
+        }
 
-init();
-</script>
+        // Navegar entre tarjetas (-1 anterior, 1 siguiente)
+        function navigateCard(direction, event) {
+            if (event) event.stopPropagation();
+            if (currentVocabulary.length === 0) return;
+
+            currentIndex += direction;
+            if (currentIndex >= currentVocabulary.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = currentVocabulary.length - 1;
+
+            renderCard();
+        }
+
+        // Mostrar / Ocultar Pinyin dinámicamente
+        function togglePinyin(event) {
+            if (event) event.stopPropagation();
+            showPinyin = !showPinyin;
+            
+            const pinyinEl = document.getElementById('front-pinyin');
+            const btn = document.getElementById('btn-pinyin');
+            
+            if (showPinyin) {
+                pinyinEl.style.opacity = '1';
+                btn.innerHTML = `<i data-lucide="eye-off" class="w-4 h-4"></i> <span>Ocultar Pinyin</span>`;
+            } else {
+                pinyinEl.style.opacity = '0';
+                btn.innerHTML = `<i data-lucide="eye" class="w-4 h-4"></i> <span>Mostrar Pinyin</span>`;
+            }
+            lucide.createIcons();
+        }
+
+        /* ============================================================
+           SISTEMA DE AUDIO: SÍNTESIS DE VOZ NATIVA (WEB SPEECH API)
+           ============================================================ */
+        function playCurrentAudio(event) {
+            if (event) event.stopPropagation();
+            if (currentVocabulary.length === 0) return;
+
+            const text = currentVocabulary[currentIndex].hanzi;
+            if (!text) return;
+
+            // 1. Limpiar o cancelar cualquier síntesis activa en el navegador
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+
+            // 2. Crear configuración de la elocución
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Idioma estándar: Chino Mandarín Continental
+            utterance.lang = "zh-CN"; 
+            
+            // Velocidad optimizada para estudiantes (0.85 evita cortes bruscos)
+            utterance.rate = 0.85; 
+
+            // 3. Buscar voces Premium instaladas en el sistema del usuario (iOS, Mac, Windows, Android)
+            if (window.speechSynthesis.getVoices) {
+                const voices = window.speechSynthesis.getVoices();
+                
+                // Intentar asignar voces neuronales o de alta calidad preferentes
+                const bestVoice = voices.find(v => v.lang.includes("zh-CN") && 
+                    (v.name.includes("Google") || v.name.includes("Premium") || v.name.includes("Microsoft") || v.name.includes("Tingting"))
+                );
+                
+                if (bestVoice) {
+                    utterance.voice = bestVoice;
+                } else {
+                    // Si no, coge la primera disponible que procese Mandarín
+                    utterance.voice = voices.find(v => v.lang.includes("zh-CN"));
+                }
+            }
+
+            // Capturar posibles errores del sistema de audio nativo de forma limpia
+            utterance.onerror = (e) => {
+                console.warn("Aviso SpeechSynthesis nativo:", e.error);
+            };
+
+            // 4. Ejecutar el habla
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Asegurar la correcta inicialización asíncrona de voces en Chrome/Edge Chromium
+        if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = () => {};
+        }
+
+        // Vistas de Estado (Mensajes de carga o error en pantalla)
+        function showStatus(iconName, message) {
+            document.getElementById('flashcard-view').classList.add('hidden');
+            const statusView = document.getElementById('status-view');
+            statusView.classList.remove('hidden');
+            
+            document.getElementById('status-icon').innerHTML = iconName === 'loader' 
+                ? `<div class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>`
+                : `<i data-lucide="${iconName}" class="w-16 h-16 text-purple-400"></i>`;
+                
+            document.getElementById('status-message').innerText = message;
+            lucide.createIcons();
+        }
+
+        function hideStatus() {
+            document.getElementById('status-view').classList.add('hidden');
+            document.getElementById('flashcard-view').classList.remove('hidden');
+        }
+
+        // Controladores del Sidebar para dispositivos móviles
+        function initMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('toggle-sidebar');
+            
+            // Por defecto oculto en móviles
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('absolute', '-translate-x-full');
+            }
+
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('-translate-x-full');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 768 && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        }
+
+        // Soporte para control mediante el teclado de tu PC (Flechas e Intro)
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('flashcard-view').classList.contains('hidden')) return;
+            
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleFlip();
+            } else if (e.key === 'ArrowLeft') {
+                navigateCard(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateCard(1);
+            } else if (e.key === 'v' || e.key === 'V') {
+                playCurrentAudio();
+            }
+        });
+    </script>
 </body>
 </html>
