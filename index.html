@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Hanzis · Repaso de vocabulario chino</title>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -207,7 +208,7 @@
   .opt-btn.correct { background: rgba(39,174,96,0.2); border-color: #27ae60; color: #5dfc8a; }
   .opt-btn.wrong { background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #ff8080; }
 
-  /* Rediseño responsivo de filas de Vocabulario para iPhone/Móviles */
+  /* Filas de Vocabulario para iPhone/Móviles */
   .search-input {
     width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(192,132,252,0.3);
     border-radius: 12px; padding: 12px 16px; color: #f0e8fe; font-size: 14px;
@@ -223,23 +224,16 @@
   }
   .word-row.reinforced { border-color: rgba(192,132,252,0.4); }
   
-  /* Bloque izquierdo elástico */
-  .word-left-block { 
-    display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; 
-  }
-  /* Contenedor superior del bloque izquierdo (Filtros + Hanzis + Pinyin) */
-  .word-top-meta {
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0;
-  }
+  .word-left-block { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+  .word-top-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
   .word-course-tag { font-size: 14px; color: #b08bf8; font-weight: 700; white-space: nowrap; }
-  .word-hanzi { font-size: 32px; display: inline-flex; align-items: center; justify-content: center; font-weight: 500; line-height: 1.1; }
+  
+  /* Ajuste para que el contenedor Hanzi sea clicable con buen tamaño */
+  .word-hanzi { font-size: 32px; display: inline-flex; align-items: center; justify-content: center; font-weight: 500; line-height: 1.1; cursor: pointer; }
   .word-pinyin { color: #c084fc; font-size: 15px; font-weight: 600; white-space: nowrap; }
   .word-meaning { font-size: 14px; color: rgba(240,232,254,0.7); line-height: 1.4; word-break: break-word; }
   
-  /* Bloque derecho compacto */
-  .word-right-block { 
-    display: flex; flex-direction: column; align-items: center; gap: 8px; justify-content: center; shrink: 0;
-  }
+  .word-right-block { display: flex; flex-direction: column; align-items: center; gap: 8px; justify-content: center; shrink: 0; }
   .weight-badge { font-size: 10px; color: #c084fc; background: rgba(192,132,252,0.15); border-radius: 4px; padding: 2px 6px; font-weight: 700; }
   .play-icon-btn {
     background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; color: white;
@@ -247,6 +241,43 @@
     display: flex; align-items: center; justify-content: center; transition: transform 0.1s; shrink: 0;
   }
   .play-icon-btn:active { transform: scale(0.95); }
+
+  /* NUEVO: Modal estilizado de trazos (Hanzi Writer) */
+  .writer-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 7, 30, 0.85); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 16px;
+  }
+  .writer-modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .writer-modal {
+    background: #22123b; border: 1px solid rgba(192,132,252,0.4);
+    border-radius: 24px; width: 100%; max-width: 340px; padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+  .writer-modal-header { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+  .writer-modal-title { font-size: 16px; font-weight: 700; color: #c084fc; }
+  .writer-close-btn { background: transparent; border: none; color: rgba(240,232,254,0.5); font-size: 22px; cursor: pointer; }
+  
+  /* Selector de pestañas para palabras compuestas (varios caracteres) */
+  .writer-tabs { display: flex; gap: 6px; width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: center; }
+  .writer-tab {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: #f0e8fe; border-radius: 8px; padding: 6px 12px; font-size: 16px; cursor: pointer;
+  }
+  .writer-tab.active { background: rgba(192,132,252,0.25); border-color: #c084fc; color: white; font-weight: 700; }
+
+  /* Lienzo del SVG */
+  .writer-canvas-holder {
+    background: #190a35; border: 1px solid rgba(192,132,252,0.2); border-radius: 16px;
+    width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .writer-controls { display: flex; gap: 10px; width: 100%; }
+  .writer-btn {
+    flex: 1; padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 700; text-align: center;
+  }
+  .writer-btn-anim { background: #9333ea; color: white; }
+  .writer-btn-quiz { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #f0e8fe; }
 
   .empty-state { text-align: center; color: rgba(240,232,254,0.4); padding: 40px 20px; font-size: 14px; }
   .footer-link {
@@ -259,6 +290,23 @@
 <body>
 
 <div id="app"></div>
+
+<div id="writer-overlay" class="writer-modal-overlay" onclick="closeStrokeModal(event)">
+  <div class="writer-modal" onclick="event.stopPropagation()">
+    <div class="writer-modal-header">
+      <span class="writer-modal-title">Orden de trazos</span>
+      <button class="writer-close-btn" onclick="closeStrokeModal(null)">✕</button>
+    </div>
+    <div id="writer-tabs-container" class="writer-tabs"></div>
+    <div class="writer-canvas-holder">
+      <div id="writer-target"></div>
+    </div>
+    <div class="writer-controls">
+      <button class="writer-btn writer-btn-anim" onclick="triggerStrokeAnim()">🎬 Animar</button>
+      <button class="writer-btn writer-btn-quiz" onclick="triggerStrokeQuiz()">✍ Practice</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const COURSE_FILES = [
@@ -474,6 +522,75 @@ function answerQuiz(optIdx) {
   }, 1600);
 }
 
+/* LÓGICA DE MANEJO DE HANZI WRITER (TRAZOS) */
+let currentWriterInstance = null;
+let currentActiveChar = "";
+
+function openStrokeModal(hanziString) {
+  if (!hanziString) return;
+  // Filtrar solo caracteres chinos válidos aproximados (evitar signos de puntuación)
+  const characters = hanziString.replace(/[^\u4e00-\u9fa5]/g, "").split("");
+  if (characters.length === 0) return;
+
+  const overlay = document.getElementById("writer-overlay");
+  const tabsContainer = document.getElementById("writer-tabs-container");
+  tabsContainer.innerHTML = "";
+
+  characters.forEach((char, index) => {
+    const tab = document.createElement("button");
+    tab.className = "writer-tab" + (index === 0 ? " active" : "");
+    tab.textContent = char;
+    tab.onclick = () => {
+      document.querySelectorAll(".writer-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      loadHanziWriterChar(char);
+    };
+    tabsContainer.appendChild(tab);
+  });
+
+  overlay.classList.add("open");
+  loadHanziWriterChar(characters[0]);
+}
+
+function closeStrokeModal(e) {
+  if (e) e.stopPropagation();
+  document.getElementById("writer-overlay").classList.remove("open");
+  document.getElementById("writer-target").innerHTML = "";
+  currentWriterInstance = null;
+}
+
+function loadHanziWriterChar(char) {
+  currentActiveChar = char;
+  document.getElementById("writer-target").innerHTML = "";
+  
+  currentWriterInstance = HanziWriter.create('writer-target', char, {
+    width: 180,
+    height: 180,
+    padding: 15,
+    strokeColor: '#c084fc',
+    radicalColor: '#f43f5e',
+    outlineColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#190a35',
+    showOutline: true,
+    delayBetweenLoops: 1000
+  });
+  
+  currentWriterInstance.animateCharacter();
+}
+
+function triggerStrokeAnim() {
+  if (currentWriterInstance) {
+    currentWriterInstance.cancelQuiz();
+    currentWriterInstance.animateCharacter();
+  }
+}
+
+function triggerStrokeQuiz() {
+  if (currentWriterInstance) {
+    currentWriterInstance.quiz();
+  }
+}
+
 function el(tag, attrs = {}, children = []) {
   const node = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -503,7 +620,7 @@ function header(title, rightText, backFn) {
 
 function coloredHanziEl(hanzi, tone, size) {
   const tones = tone.split("-");
-  const wrap = el("div", { class: "word-hanzi", style: `font-size:${size}px` });
+  const wrap = el("div", { class: "word-hanzi", style: `font-size:${size}px`, onclick: (e) => { e.stopPropagation(); openStrokeModal(hanzi); } });
   hanzi.split("").forEach((ch, i) => {
     wrap.appendChild(el("span", { style: `color:${getToneColor(tones[i] || tones[0])}` }, ch));
   });
@@ -673,7 +790,7 @@ function render() {
     if (state.flipped) {
       card.appendChild(el("div", { class: "meaning-text" }, word.meaning));
     } else {
-      card.appendChild(el("div", { class: "hint-text" }, "Toca para ver el significado"));
+      card.appendChild(el("div", { class: "hint-text" }, "Toca para ver el significado o el Hanzi para ver los trazos"));
     }
 
     const controls = el("div", { class: "row-controls" }, [
