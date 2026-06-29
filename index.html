@@ -130,6 +130,47 @@
   }
   .toggle-btn.active { background: rgba(192,132,252,0.15); border-color: rgba(192,132,252,0.5); }
 
+  /* Controles de Voz inferiores */
+  .voice-controls-panel {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(192, 132, 252, 0.15);
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .voice-control-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+  .voice-control-row:last-child { margin-bottom: 0; }
+  .voice-label { font-size: 12px; color: rgba(240, 232, 254, 0.5); }
+  .voice-select {
+    background: #251343;
+    border: 1px solid rgba(192, 132, 252, 0.3);
+    color: #f0e8fe;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+    flex: 1;
+    max-width: 240px;
+  }
+  .speed-container { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 240px; }
+  .speed-slider {
+    flex: 1;
+    accent-color: #c084fc;
+    cursor: pointer;
+  }
+  .speed-val { font-size: 12px; color: #c084fc; font-weight: bold; min-width: 40px; text-align: right; }
+
   /* Quiz */
   .progress-text { font-size: 11px; color: rgba(240,232,254,0.4); margin-bottom: 5px; text-align: center; }
   .progress-bar-bg { background: rgba(255,255,255,0.07); border-radius: 8px; height: 5px; margin-bottom: 16px; }
@@ -198,19 +239,6 @@
     border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 11px; display: block; margin: 16px auto 0 auto;
   }
   .warning-text { font-size: 12px; color: rgba(192,132,252,0.7); margin-top: 4px; text-align: center; }
-  
-  /* Select de voces Premium */
-  .voice-select-dropdown {
-    background: rgba(25, 10, 53, 0.9);
-    border: 1px solid rgba(192, 132, 252, 0.4);
-    color: #f0e8fe;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 12px;
-    outline: none;
-    cursor: pointer;
-    max-width: 160px;
-  }
 </style>
 </head>
 <body>
@@ -256,42 +284,70 @@ function computeTone(hanzi, pinyin) {
 function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
 
 /* ============================================================
-   SISTEMA DE AUDIO DIGITAL DE ALTA FIDELIDAD (MÉTODO ULTRAESTABLE)
+   SISTEMA DE VOZ AVANZADO (CORREGIDO PARA NUEVAS VOCES LOCALES)
    ============================================================ */
-let currentAudio = null;
+let currentExternalAudio = null;
+
+// Configuración global persistida de la interfaz de audio
+let selectedVoiceType = localStorage.getItem("hanzi-voice-type") || "youdao";
+let selectedVoiceSpeed = parseFloat(localStorage.getItem("hanzi-voice-speed") || "1.0");
 
 function speak(text) {
   if (!text) return;
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
-  }
   
-  const voiceId = state.selectedVoice || "0"; 
-  let finalUrl = "";
-
-  // Selector dinámico usando pasarelas nativas de alta fidelidad estables sin CORS
-  if (voiceId === "0") {
-    // Voz Estándar Femenina Limpia
-    finalUrl = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
-  } else if (voiceId === "1") {
-    // Voz Neural Femenina Enérgica
-    finalUrl = "https://tts.baidu.com/text2audio?tex=" + encodeURIComponent(text) + "&lan=zh&cuid=dict&pdt=301&vol=9&per=0";
-  } else if (voiceId === "3") {
-    // Voz Neural Masculina Natural
-    finalUrl = "https://tts.baidu.com/text2audio?tex=" + encodeURIComponent(text) + "&lan=zh&cuid=dict&pdt=301&vol=9&per=3";
-  } else {
-    // Voz Neural Masculina Corporativa/Locutor
-    finalUrl = "https://tts.baidu.com/text2audio?tex=" + encodeURIComponent(text) + "&lan=zh&cuid=dict&pdt=301&vol=9&per=4";
+  // Detener audios anteriores nativos y externos para evitar solapamientos
+  if (typeof speechSynthesis !== 'undefined') {
+    speechSynthesis.cancel();
+  }
+  if (currentExternalAudio) {
+    currentExternalAudio.pause();
+    currentExternalAudio.currentTime = 0;
   }
 
-  currentAudio = new Audio(finalUrl);
-  
-  if (state.voiceSpeed) {
-    currentAudio.playbackRate = state.voiceSpeed;
+  // Opción 1: Voz Estándar Externa (Motor Youdao)
+  if (selectedVoiceType === "youdao") {
+    const url = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
+    currentExternalAudio = new Audio(url);
+    // Nota: Youdao no soporta cambiar dinámicamente la velocidad local por API nativa de forma estable
+    currentExternalAudio.play().catch(() => {});
+    return;
   }
-  
-  currentAudio.play().catch(() => {});
+
+  // Opción 2: Voces del Sistema de Windows (Nativas locales)
+  if (typeof SpeechSynthesisUtterance !== 'undefined') {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-CN';
+    utterance.rate = selectedVoiceSpeed;
+
+    // Filtrar la lista de voces en Mandarín reconocidas por el navegador
+    const zhVoices = speechSynthesis.getVoices().filter(v => 
+      v.lang.toLowerCase().startsWith('zh-cn') || 
+      v.lang.toLowerCase().startsWith('zh_cn') ||
+      v.lang.toLowerCase().includes('zh')
+    );
+
+    if (zhVoices.length > 0) {
+      if (selectedVoiceType === "fluida" && zhVoices[0]) {
+        utterance.voice = zhVoices[0]; // Por ejemplo Huihui
+      } else if (selectedVoiceType === "energica" && zhVoices[1]) {
+        utterance.voice = zhVoices[1]; // Por ejemplo Kangkang
+      } else if (selectedVoiceType === "locutor" && zhVoices[2]) {
+        utterance.voice = zhVoices[2]; // Por ejemplo Yaoyao
+      } else {
+        utterance.voice = zhVoices[0]; // Fallback automático
+      }
+    }
+
+    speechSynthesis.speak(utterance);
+  }
+}
+
+// Carga inicial obligatoria de voces en navegadores basados en Chromium / Chrome
+if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = () => {
+    // Esto fuerza al navegador a poblar la lista interna de voces del registro de Windows inmediatamente
+    speechSynthesis.getVoices();
+  };
 }
 
 const STORAGE_KEY = "hanzis-weights";
@@ -319,8 +375,6 @@ const state = {
   flipped: false,
   showPinyin: true,
   browseSearch: "",
-  voiceSpeed: 0.75, 
-  selectedVoice: "0", 
   quiz: { queue: [], pos: 0, options: [], selected: null, score: 0, total: 0, done: false },
 };
 
@@ -464,6 +518,44 @@ function coloredHanziEl(hanzi, tone, size) {
   return wrap;
 }
 
+/* Panel reusable de controles de voz inferiores */
+function renderVoiceControls() {
+  const selectVoz = el("select", {
+    class: "voice-select",
+    onchange: (e) => {
+      selectedVoiceType = e.target.value;
+      localStorage.setItem("hanzi-voice-type", selectedVoiceType);
+    }
+  }, [
+    el("option", { value: "youdao", selected: selectedVoiceType === "youdao" ? "selected" : null }, "👩‍💼 Voz Estándar"),
+    el("option", { value: "fluida", selected: selectedVoiceType === "fluida" ? "selected" : null }, "👩 Voz Fluida"),
+    el("option", { value: "energica", selected: selectedVoiceType === "energica" ? "selected" : null }, "👨 Voz Enérgica"),
+    el("option", { value: "locutor", selected: selectedVoiceType === "locutor" ? "selected" : null }, "👨‍💼 Voz Locutor")
+  ]);
+
+  const speedValLabel = el("span", { class: "speed-val" }, selectedVoiceSpeed.toFixed(2) + "x");
+  const sliderSpeed = el("input", {
+    type: "range", min: "0.5", max: "2.0", step: "0.05", class: "speed-slider",
+    value: selectedVoiceSpeed.toString(),
+    oninput: (e) => {
+      selectedVoiceSpeed = parseFloat(e.target.value);
+      speedValLabel.textContent = selectedVoiceSpeed.toFixed(2) + "x";
+      localStorage.setItem("hanzi-voice-speed", selectedVoiceSpeed.toString());
+    }
+  });
+
+  return el("div", { class: "voice-controls-panel" }, [
+    el("div", { class: "voice-control-row" }, [
+      el("span", { class: "voice-label" }, "Tipo de voz:"),
+      selectVoz
+    ]),
+    el("div", { class: "voice-control-row" }, [
+      el("span", { class: "voice-label" }, "Velocidad:"),
+      el("div", { class: "speed-container" }, [sliderSpeed, speedValLabel])
+    ])
+  ]);
+}
+
 function render() {
   const app = document.getElementById("app");
   app.innerHTML = "";
@@ -598,50 +690,15 @@ function render() {
       el("button", { class: "ctrl-btn", onclick: () => { state.cardIndex = (state.cardIndex + 1) % state.shuffled.length; state.flipped = false; render(); } }, "→"),
     ]);
 
-    const pinyinToggle = el("div", { style: "display:flex;justify-content:center;margin-bottom:18px;" },
+    const pinyinToggle = el("div", { style: "display:flex;justify-content:center" },
       el("button", { class: "toggle-btn" + (state.showPinyin ? " active" : ""), onclick: () => { state.showPinyin = !state.showPinyin; render(); } },
         state.showPinyin ? "🔤 Ocultar Pinyin" : "🔤 Mostrar Pinyin")
     );
 
-    const speedLabel = el("span", { style: "font-size:12px;color:#c084fc;font-weight:700;" }, state.voiceSpeed.toFixed(2) + "x");
-    
-    // Lista de opciones de voces Premium sin restricciones
-    const voiceDropdown = el("select", {
-      class: "voice-select-dropdown",
-      onchange: (e) => {
-        state.selectedVoice = e.target.value;
-      }
-    }, [
-      el("option", { value: "0", selected: state.selectedVoice === "0" ? "selected" : null }, "👩 Voz Estándar"),
-      el("option", { value: "1", selected: state.selectedVoice === "1" ? "selected" : null }, "👧 Voz Fluida"),
-      el("option", { value: "3", selected: state.selectedVoice === "3" ? "selected" : null }, "👦 Voz Enérgica"),
-      el("option", { value: "4", selected: state.selectedVoice === "4" ? "selected" : null }, "👨 Voz Locutor")
-    ]);
-
-    const speedSlider = el("div", { style: "display:flex;flex-direction:column;gap:12px;margin:14px auto;background:rgba(255,255,255,0.03);border:1px solid rgba(192,132,252,0.15);padding:14px 16px;border-radius:12px;max-width:320px;" }, [
-      el("div", { style: "display:flex;align-items:center;width:100%;justify-content:space-between;" }, [
-        el("span", { style: "font-size:12px;color:rgba(240,232,254,0.5)" }, "Tipo de voz:"),
-        voiceDropdown
-      ]),
-      el("div", { style: "display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-top:4px;" }, [
-        el("span", { style: "font-size:12px;color:rgba(240,232,254,0.5)" }, "Velocidad:"),
-        el("input", {
-          type: "range", min: "0.5", max: "1", step: "0.05", value: state.voiceSpeed,
-          style: "flex:1;cursor:pointer;accent-color:#c084fc;",
-          oninput: (e) => {
-            state.voiceSpeed = parseFloat(e.target.value);
-            speedLabel.innerText = state.voiceSpeed.toFixed(2) + "x";
-            if(currentAudio) currentAudio.playbackRate = state.voiceSpeed;
-          }
-        }),
-        speedLabel
-      ])
-    ]);
-
     main.appendChild(card);
     main.appendChild(controls);
     main.appendChild(pinyinToggle);
-    main.appendChild(speedSlider); 
+    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Tarjetas Flash", (state.cardIndex + 1) + "/" + state.shuffled.length, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
@@ -708,6 +765,8 @@ function render() {
       });
       main.appendChild(grid);
     }
+    
+    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Quiz", "✓ " + state.quiz.score, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
@@ -750,6 +809,7 @@ function render() {
     });
     if (filtered.length === 0) list.appendChild(el("div", { class: "empty-state" }, "Sin resultados."));
     main.appendChild(list);
+    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Vocabulario", filtered.length.toString(), () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
