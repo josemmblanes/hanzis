@@ -276,7 +276,7 @@ const DATA_DICTIONARY = [
   { "hanzi": "教育学", "pinyin": "jiào yù xué", "meaning": "pedagogía, ciencias de la educación", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
   { "hanzi": "厉", "pinyin": "lì", "meaning": "estricto, fuerte, violento", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
   { "hanzi": "教育", "pinyin": "jiào yù", "meaning": "educar, educación", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
-  { "hanzi": "硕士", "pinyin": "shuò shì", "meaning": "máster, título de postgrado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "硕士", "pinyin": "shuò .shì", "meaning": "máster, título de postgrado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
   { "hanzi": "任务", "pinyin": "rèn wu", "meaning": "tarea, encargo, misión", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
   { "hanzi": "任", "pinyin": "rèn", "meaning": "cargo, responsibility, nombrar, permitir, cualquiera; apellido Ren", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
   { "hanzi": "持", "pinyin": "chí", "meaning": "sostener, mantener, continuar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
@@ -478,9 +478,9 @@ const COURSE_LEVEL_LABELS = {
 
 // --- ESTADO DE LA APLICACIÓN ---
 let state = {
-  view: "SELECT_COURSE", // Vistas válidas: SELECT_COURSE, SELECT_TOPIC, STUDY, BROWSE
-  selectedCourses: [],   // Cursos elegidos en la primera pantalla
-  selectedTopic: "all",  // Tema elegido en la segunda pantalla ("all" o el número de tema)
+  view: "SELECT_COURSE", // SELECT_COURSE, SELECT_TOPIC, STUDY, BROWSE
+  selectedCourses: [],
+  selectedTopic: "all",
   words: [],
   currentIndex: 0,
   isRevealed: false,
@@ -534,28 +534,24 @@ function toggleCourseSelection(courseKey) {
   render();
 }
 
-// Pasa de la pantalla de cursos a la pantalla de selección de temas
 function goToTopicSelection() {
   if (state.selectedCourses.length === 0) return;
   state.view = "SELECT_TOPIC";
-  state.selectedTopic = "all"; // Reiniciar por defecto
+  state.selectedTopic = "all";
   render();
 }
 
-// Pasa de la selección de temas al inicio del juego/estudio
 function startStudy(topicKey) {
   state.selectedTopic = topicKey;
 
-  // Filtrar vocabulario por Cursos seleccionados Y Tema seleccionado
+  // Filtrar vocabulario combinando los cursos seleccionados con el tema elegido
   state.words = DATA_DICTIONARY.filter(item => {
     const matchesCourse = state.selectedCourses.includes(item._course);
     const matchesTopic = (topicKey === "all" || item.tema === topicKey);
     return matchesCourse && matchesTopic;
   });
 
-  // Mezclar aleatoriamente el set filtrado
   state.words.sort(() => Math.random() - 0.5);
-
   state.currentIndex = 0;
   state.isRevealed = false;
   state.weights = {};
@@ -605,7 +601,7 @@ function handleAnswer(isCorrect) {
     render();
     initWriter();
   } else {
-    alert("¡Ciclo de estudio completado para los temas seleccionados!");
+    alert("¡Ciclo de estudio completado!");
     goBack();
   }
 }
@@ -618,7 +614,6 @@ function speak(text) {
   }
 }
 
-// Corregido flujo para asegurar coherencia en el botón volver
 function goBack() {
   if (state.view === "STUDY" || state.view === "BROWSE") {
     state.view = "SELECT_TOPIC";
@@ -639,13 +634,12 @@ function render() {
   const root = document.getElementById("app");
   root.innerHTML = "";
 
-  // 1. Barra de cabecera dinámica
   const headerLeftBtn = (state.view !== "SELECT_COURSE") 
     ? el("button", { class: "back-btn", onclick: goBack }, "← Volver") 
     : el("div");
 
   const headerRightBtn = (state.view === "STUDY")
-    ? el("button", { class: "back-btn", onclick: () => switchView("BROWSE") }, "🔍 Lista completa")
+    ? el("button", { class: "back-btn", onclick: () => switchView("BROWSE") }, "🔍 Lista")
     : (state.view === "BROWSE")
       ? el("button", { class: "back-btn", onclick: () => switchView("STUDY") }, "📖 Tarjetas")
       : el("div");
@@ -659,9 +653,7 @@ function render() {
 
   const main = el("div", { class: "main-content" });
 
-  // 2. Enrutador interno según vista de estado
   if (state.view === "SELECT_COURSE") {
-    // --- VISTA 1: SELECCIÓN DE CURSOS ---
     const grid = el("div", { class: "grid-menu" });
     Object.keys(COURSE_LEVEL_LABELS).forEach(key => {
       const isSelected = state.selectedCourses.includes(key);
@@ -686,7 +678,7 @@ function render() {
     main.appendChild(startBtn);
 
   } else if (state.view === "SELECT_TOPIC") {
-    // --- VISTA INTERMEDIA NUEVA: SELECCIÓN DE TEMAS ---
+    // --- NUEVA PANTALLA EXCLUSIVA DE SELECCIÓN DE TEMAS ---
     const topicsSet = new Set();
     DATA_DICTIONARY.forEach(item => {
       if (state.selectedCourses.includes(item._course) && item.tema) {
@@ -702,7 +694,7 @@ function render() {
       onclick: () => startStudy("all") 
     }, [
       el("h2", {}, "Todos los temas"),
-      el("p", {}, "Estudiar el bloque entero de los cursos seleccionados")
+      el("p", {}, "Estudiar el bloque completo")
     ]));
 
     availableTopics.forEach(topic => {
@@ -711,18 +703,17 @@ function render() {
         onclick: () => startStudy(topic) 
       }, [
         el("h2", {}, `Tema ${topic}`),
-        el("p", {}, `Unidad de vocabulario ${topic}`)
+        el("p", {}, `Vocabulario unidad ${topic}`)
       ]);
       grid.appendChild(card);
     });
 
-    main.appendChild(el("div", { style: "font-size: 16px; color: #c084fc; margin-bottom: 20px; text-align:center;" }, "Ahora elige un tema específico para comenzar:"));
+    main.appendChild(el("div", { style: "font-size: 16px; color: #c084fc; margin-bottom: 20px; text-align:center;" }, "Elige un tema específico para comenzar:"));
     main.appendChild(grid);
 
   } else if (state.view === "STUDY") {
-    // --- VISTA DE TARJETAS DE ESTUDIO ---
     if (state.words.length === 0) {
-      main.appendChild(el("div", { style: "text-align:center; padding:40px; color:#a78bfa;" }, "No se encontraron caracteres para los criterios seleccionados."));
+      main.appendChild(el("div", { style: "text-align:center; padding:40px; color:#a78bfa;" }, "No se encontraron caracteres."));
     } else {
       const currentWord = state.words[state.currentIndex];
       
@@ -760,7 +751,6 @@ function render() {
     }
 
   } else if (state.view === "BROWSE") {
-    // --- VISTA DE EXPLORACIÓN / DICCIONARIO ---
     const search = el("input", { 
       class: "search-box", 
       placeholder: "Filtrar por ideograma, pinyin o traducción...", 
@@ -779,12 +769,13 @@ function render() {
     filtered.forEach(word => {
       const idx = state.words.indexOf(word);
       const wgt = state.weights[idx] || 1;
+      const realLevelText = COURSE_LEVEL_LABELS[word._course] || word._course;
 
       const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
         el("div", { class: "word-left-block" }, [
           el("div", { class: "word-top-meta" }, [
-            el("div", { class: "word-course-tag" }, `${word.curso} · T${word.tema}`),
-            coloredHanziEl(word.hanzi, word.tone, 24),
+            el("div", { class: "word-course-tag" }, realLevelText),
+            coloredHanziEl(word.hanzi, word.tone, 32),
             el("div", { class: "word-pinyin" }, word.pinyin)
           ]),
           el("div", { class: "word-meaning" }, word.meaning)
@@ -804,8 +795,9 @@ function render() {
   root.appendChild(main);
 }
 
-// Ejecución forzada e inmediata de la app sin esperar eventos tardíos
-render();
+window.onload = () => {
+  render();
+};
 </script>
 </body>
 </html>
