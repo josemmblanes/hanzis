@@ -418,6 +418,7 @@ const state = {
   allWords: [],              
   availableCourses: [],       
   selectedCourses: [],
+  selectedTopic: null,
   words: [],                 
   persistedWeights: {},      
   weights: {},                
@@ -476,6 +477,29 @@ function genOptions(words, idx) {
   const pool = words.filter(w => w.hanzi !== word.hanzi);
   const wrong = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
   return [...wrong, word].sort(() => Math.random() - 0.5);
+}
+
+function getAvailableTopics() {
+  const courseWords = getFilteredWords();
+  const set = new Set();
+  courseWords.forEach(w => { if (w.tema) set.add(w.tema); });
+  return Array.from(set).sort();
+}
+
+function getTopicFilteredWords(topic) {
+  const base = getFilteredWords();
+  return topic ? base.filter(w => w.tema === topic) : base;
+}
+
+function startStudyWithTopic(topic) {
+  state.selectedTopic = topic;
+  state.words = getTopicFilteredWords(topic);
+  state.shuffled = [...state.words].sort(() => Math.random() - 0.5);
+  state.weights = {};
+  state.words.forEach((w, i) => { state.weights[i] = state.persistedWeights[wordKey(w)] || 1; });
+  state.cardIndex = 0;
+  state.screen = "menu";
+  render();
 }
 
 function startQuiz() {
@@ -722,17 +746,60 @@ function render() {
       disabled: state.selectedCourses.length === 0 ? "disabled" : null,
       onclick: () => {
         if (state.selectedCourses.length === 0) return;
-        state.words = getFilteredWords();
-        state.shuffled = [...state.words].sort(() => Math.random() - 0.5);
-        state.weights = {};
-        state.words.forEach((w, i) => { state.weights[i] = state.persistedWeights[wordKey(w)] || 1; });
-        state.cardIndex = 0;
-        state.screen = "menu";
+        state.selectedTopic = null;
+        state.screen = "topic-select";
         render();
       }
     }, state.selectedCourses.length === 0 ? "Elige al menos un curso" : `Continuar (${totalSel} palabras)`));
 
     app.appendChild(header("Hanzis", state.allWords.length + " palabras totales"));
+    app.appendChild(main);
+    return;
+  }
+
+  if (state.screen === "topic-select") {
+    const main = el("div", { class: "main center-col" });
+    main.appendChild(el("div", { class: "hero-emoji" }, "主题"));
+    main.appendChild(el("div", { class: "hero-label" }, "¿Qué tema quieres repasar?"));
+    main.appendChild(el("div", { class: "hero-sub" }, "Elige un tema o repasa el bloque completo"));
+
+    const courseWords = getFilteredWords();
+    const topics = getAvailableTopics();
+
+    const list = el("div", { style: "width:100%" });
+
+    list.appendChild(el("button", {
+      class: "menu-btn",
+      onclick: () => startStudyWithTopic(null)
+    }, [
+      el("span", { class: "menu-icon" }, "📚"),
+      el("div", {}, [
+        el("div", { class: "menu-title" }, "Todos los temas"),
+        el("div", { class: "menu-desc" }, courseWords.length + " palabras · curso completo"),
+      ]),
+    ]));
+
+    topics.forEach(tema => {
+      const count = courseWords.filter(w => w.tema === tema).length;
+      list.appendChild(el("button", {
+        class: "menu-btn",
+        onclick: () => startStudyWithTopic(tema)
+      }, [
+        el("span", { class: "menu-icon" }, "🏷"),
+        el("div", {}, [
+          el("div", { class: "menu-title" }, tema),
+          el("div", { class: "menu-desc" }, count + " palabras"),
+        ]),
+      ]));
+    });
+
+    if (topics.length === 0) {
+      list.appendChild(el("div", { class: "warning-text" }, "Los cursos elegidos no tienen el campo \"tema\" en sus datos · usa \"Todos los temas\""));
+    }
+
+    main.appendChild(list);
+
+    app.appendChild(header("Hanzis", courseWords.length + " palabras", () => { state.screen = "course-select"; render(); }));
     app.appendChild(main);
     return;
   }
@@ -777,7 +844,7 @@ function render() {
       }
     }, "Borrar progreso guardado"));
 
-    app.appendChild(header("Hanzis", state.words.length + " palabras", () => { state.screen = "course-select"; render(); }));
+    app.appendChild(header("Hanzis", state.words.length + " palabras", () => { state.screen = "topic-select"; render(); }));
     app.appendChild(main);
     return;
   }
