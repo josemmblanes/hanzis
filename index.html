@@ -295,7 +295,7 @@ const DATA_DICTIONARY = [
   { "hanzi": "舞会", "pinyin": "wǔ huì", "meaning": "baile, fiesta", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
   { "hanzi": "邀请", "pinyin": "yāo qǐng", "meaning": "invitar, Doc, invitación", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
   { "hanzi": "邀", "pinyin": "yāo", "meaning": "invitar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
-  { "hanzi": "累 / 累", "pinyin": "lèi / lěi", "meaning": "cansado/acumular, conectar, involucrar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "累 / 累", "pinyin": "lèi / lěi", "meaning": "cansado/acumular, conectar, copiar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
   { "hanzi": "不得不", "pinyin": "bù dé bù", "meaning": "no tener más remedio que..., verse forzado a...", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
   { "hanzi": "极其", "pinyin": "jí qí", "meaning": "+adjetivo: extremadamente", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
   { "hanzi": "接受", "pinyin": "jiē shòu", "meaning": "recibir (cosas abstractas), aceptar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
@@ -570,3 +570,242 @@ function initWriter() {
   const currentWord = state.words[state.currentIndex];
   
   document.getElementById("writer-target").innerHTML = "";
+  
+  writerInstance = HanziWriter.create('writer-target', currentWord.hanzi, {
+    width: 200,
+    height: 200,
+    padding: 20,
+    showOutline: true,
+    strokeAnimationSpeed: 1.2,
+    delayBetweenStrokes: 150,
+    outlineColor: 'rgba(255,255,255,0.06)',
+    strokeColor: '#c084fc'
+  });
+}
+
+function handleReveal() {
+  state.isRevealed = true;
+  render();
+  if (writerInstance) writerInstance.animateCharacter();
+}
+
+function handleAnswer(isCorrect) {
+  const idx = state.currentIndex;
+  if (!state.weights[idx]) state.weights[idx] = 1;
+
+  if (!isCorrect) {
+    state.weights[idx] += 1;
+    const currentWord = state.words[idx];
+    state.words.push({ ...currentWord });
+  }
+
+  if (state.currentIndex < state.words.length - 1) {
+    state.currentIndex++;
+    state.isRevealed = false;
+    render();
+    initWriter();
+  } else {
+    alert("¡Ciclo de estudio completado para los temas seleccionados!");
+    goBack();
+  }
+}
+
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-CN';
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+// Corregido flujo para asegurar coherencia en el botón volver
+function goBack() {
+  if (state.view === "STUDY" || state.view === "BROWSE") {
+    state.view = "SELECT_TOPIC";
+  } else if (state.view === "SELECT_TOPIC") {
+    state.view = "SELECT_COURSE";
+  }
+  render();
+}
+
+function switchView(targetView) {
+  state.view = targetView;
+  render();
+  if (targetView === "STUDY") setTimeout(initWriter, 50);
+}
+
+// --- RENDERIZADO DEL INTERFAZ (UI) ---
+function render() {
+  const root = document.getElementById("app");
+  root.innerHTML = "";
+
+  // 1. Barra de cabecera dinámica
+  const headerLeftBtn = (state.view !== "SELECT_COURSE") 
+    ? el("button", { class: "back-btn", onclick: goBack }, "← Volver") 
+    : el("div");
+
+  const headerRightBtn = (state.view === "STUDY")
+    ? el("button", { class: "back-btn", onclick: () => switchView("BROWSE") }, "🔍 Lista completa")
+    : (state.view === "BROWSE")
+      ? el("button", { class: "back-btn", onclick: () => switchView("STUDY") }, "📖 Tarjetas")
+      : el("div");
+
+  const header = el("div", { class: "header" }, [
+    headerLeftBtn,
+    el("h1", {}, "Hanzis \u00B7 \u7EC3\u4E60"),
+    headerRightBtn
+  ]);
+  root.appendChild(header);
+
+  const main = el("div", { class: "main-content" });
+
+  // 2. Enrutador interno según vista de estado
+  if (state.view === "SELECT_COURSE") {
+    // --- VISTA 1: SELECCIÓN DE CURSOS ---
+    const grid = el("div", { class: "grid-menu" });
+    Object.keys(COURSE_LEVEL_LABELS).forEach(key => {
+      const isSelected = state.selectedCourses.includes(key);
+      const card = el("div", { 
+        class: "menu-card" + (isSelected ? " selected" : ""),
+        onclick: () => toggleCourseSelection(key)
+      }, [
+        el("h2", {}, key.replace("hsk", "HSK ").toUpperCase()),
+        el("p", {}, COURSE_LEVEL_LABELS[key])
+      ]);
+      grid.appendChild(card);
+    });
+
+    const startBtn = el("button", { 
+      class: "btn btn-primary", 
+      disabled: state.selectedCourses.length === 0 ? true : null,
+      onclick: goToTopicSelection
+    }, "Siguiente \u2192");
+
+    main.appendChild(el("div", { style: "font-size: 16px; color: #c084fc; margin-bottom: 20px; text-align:center;" }, "Selecciona los cursos que deseas repasar:"));
+    main.appendChild(grid);
+    main.appendChild(startBtn);
+
+  } else if (state.view === "SELECT_TOPIC") {
+    // --- VISTA INTERMEDIA NUEVA: SELECCIÓN DE TEMAS ---
+    const topicsSet = new Set();
+    DATA_DICTIONARY.forEach(item => {
+      if (state.selectedCourses.includes(item._course) && item.tema) {
+        topicsSet.add(item.tema);
+      }
+    });
+    const availableTopics = Array.from(topicsSet).sort((a, b) => parseInt(a) - parseInt(b));
+
+    const grid = el("div", { class: "grid-menu" });
+    
+    grid.appendChild(el("div", { 
+      class: "menu-card full-width", 
+      onclick: () => startStudy("all") 
+    }, [
+      el("h2", {}, "Todos los temas"),
+      el("p", {}, "Estudiar el bloque entero de los cursos seleccionados")
+    ]));
+
+    availableTopics.forEach(topic => {
+      const card = el("div", { 
+        class: "menu-card", 
+        onclick: () => startStudy(topic) 
+      }, [
+        el("h2", {}, `Tema ${topic}`),
+        el("p", {}, `Unidad de vocabulario ${topic}`)
+      ]);
+      grid.appendChild(card);
+    });
+
+    main.appendChild(el("div", { style: "font-size: 16px; color: #c084fc; margin-bottom: 20px; text-align:center;" }, "Ahora elige un tema específico para comenzar:"));
+    main.appendChild(grid);
+
+  } else if (state.view === "STUDY") {
+    // --- VISTA DE TARJETAS DE ESTUDIO ---
+    if (state.words.length === 0) {
+      main.appendChild(el("div", { style: "text-align:center; padding:40px; color:#a78bfa;" }, "No se encontraron caracteres para los criterios seleccionados."));
+    } else {
+      const currentWord = state.words[state.currentIndex];
+      
+      const stats = el("div", { class: "stats-bar" }, [
+        el("div", { class: "stat-box" }, [el("div", { class: "stat-val" }, `${state.currentIndex + 1}/${state.words.length}`), el("div", { class: "stat-lbl" }, "Progreso")]),
+        el("div", { class: "stat-box" }, [el("div", { class: "stat-val" }, currentWord.curso || "N/A"), el("div", { class: "stat-lbl" }, "Curso")]),
+        el("div", { class: "stat-box" }, [el("div", { class: "stat-val" }, `Tema ${currentWord.tema || 'N/A'}`), el("div", { class: "stat-lbl" }, "Unidad")])
+      ]);
+
+      const infoBox = el("div", { class: "info-reveal-box" });
+      if (state.isRevealed) {
+        infoBox.appendChild(el("div", { class: "pinyin-text" }, currentWord.pinyin));
+        infoBox.appendChild(el("div", { class: "meaning-text" }, currentWord.meaning));
+      } else {
+        infoBox.appendChild(el("button", { class: "reveal-placeholder-btn", onclick: handleReveal }, "Mostrar Pinyin y Significado"));
+      }
+
+      const actionZone = el("div", { class: "action-zone" });
+      if (state.isRevealed) {
+        actionZone.appendChild(el("div", { class: "btn-row" }, [
+          el("button", { class: "btn btn-danger", onclick: () => handleAnswer(false) }, "❌ Fallada"),
+          el("button", { class: "btn btn-success", onclick: () => handleAnswer(true) }, "✅ Acertada")
+        ]));
+      }
+      actionZone.appendChild(el("button", { class: "btn btn-secondary", onclick: () => speak(currentWord.hanzi) }, "🔊 Escuchar"));
+
+      const card = el("div", { class: "flashcard" }, [
+        el("div", { id: "writer-target", onclick: () => { if(writerInstance) writerInstance.animateCharacter(); } }),
+        infoBox
+      ]);
+
+      main.appendChild(stats);
+      main.appendChild(card);
+      main.appendChild(actionZone);
+    }
+
+  } else if (state.view === "BROWSE") {
+    // --- VISTA DE EXPLORACIÓN / DICCIONARIO ---
+    const search = el("input", { 
+      class: "search-box", 
+      placeholder: "Filtrar por ideograma, pinyin o traducción...", 
+      value: state.browseSearch,
+      oninput: (e) => { state.browseSearch = e.target.value; render(); }
+    });
+
+    const q = state.browseSearch.toLowerCase();
+    const filtered = state.words.filter(w =>
+      w.hanzi.includes(state.browseSearch) ||
+      w.pinyin.toLowerCase().includes(q) ||
+      w.meaning.toLowerCase().includes(q)
+    );
+
+    const list = el("div", { class: "words-list" });
+    filtered.forEach(word => {
+      const idx = state.words.indexOf(word);
+      const wgt = state.weights[idx] || 1;
+
+      const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
+        el("div", { class: "word-left-block" }, [
+          el("div", { class: "word-top-meta" }, [
+            el("div", { class: "word-course-tag" }, `${word.curso} · T${word.tema}`),
+            coloredHanziEl(word.hanzi, word.tone, 24),
+            el("div", { class: "word-pinyin" }, word.pinyin)
+          ]),
+          el("div", { class: "word-meaning" }, word.meaning)
+        ]),
+        el("div", { class: "word-right-block" }, [
+          wgt > 1 ? el("span", { class: "weight-badge" }, "×" + wgt) : null,
+          el("button", { class: "play-icon-btn", onclick: () => speak(word.hanzi) }, "🔊")
+        ])
+      ]);
+      list.appendChild(row);
+    });
+
+    main.appendChild(search);
+    main.appendChild(list);
+  }
+
+  root.appendChild(main);
+}
+
+// Ejecución forzada e inmediata de la app sin esperar eventos tardíos
+render();
+</script>
+</body>
+</html>
