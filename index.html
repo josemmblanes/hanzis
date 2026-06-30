@@ -21,680 +21,873 @@
   .header {
     width: 100%;
     background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(12px);\n    border-bottom: 1px solid rgba(192,132,252,0.2);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(192,132,252,0.2);
     padding: 16px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-sizing: border-box;
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 10;
   }
-  .header h1 { font-size: 20px; font-weight: 700; color: #fff; text-shadow: 0 2px 10px rgba(168,85,247,0.4); }
-  
+  .logo { font-size: 20px; font-weight: 700; color: #c084fc; letter-spacing: 2px; text-shadow: 0 0 20px rgba(192,132,252,0.5); }
   .back-btn {
-    background: rgba(168, 85, 247, 0.2);
-    border: 1px solid rgba(168, 85, 247, 0.4);
-    color: #e9d5ff;
-    padding: 6px 12px;
-    border-radius: 20px;
+    background: rgba(192,132,252,0.15);
+    border: 1px solid rgba(192,132,252,0.4);
+    color: #c084fc;
+    border-radius: 8px;
+    padding: 6px 14px;
     cursor: pointer;
     font-size: 13px;
-    transition: all 0.2s ease;
   }
-  .back-btn:hover {
-    background: rgba(168, 85, 247, 0.4);
-    color: #fff;
-  }
+  .main { flex: 1; width: 100%; padding: 20px 16px 48px; box-sizing: border-box; }
 
-  .main-content { padding: 20px; flex: 1; display: flex; flex-direction: column; width: 100%; }
-
-  /* Menús de Selección (Curso y Tema) */
-  .menu-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    animation: fadeIn 0.4s ease forwards;
+  /* Selección de cursos */
+  .course-btn {
+    width: 100%; max-width: 380px;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    color: #f0e8fe;
+    transition: all 0.2s;
+    margin: 0 auto 12px auto;
   }
-  .menu-title {
-    font-size: 18px;
-    color: #c084fc;
-    margin-bottom: 24px;
+  .course-btn.active { background: rgba(192,132,252,0.15); border-color: #c084fc; }
+  .checkbox {
+    width: 24px; height: 24px; border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #190a35; font-weight: 900;
+    margin-right: 14px;
+  }
+  .checkbox.active { background: #c084fc; border-color: #c084fc; }
+
+  .menu-btn {
+    width: 100%; max-width: 380px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(192,132,252,0.25);
+    border-radius: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 16px;
+    text-align: left; color: #f0e8fe;
+    margin: 0 auto 12px auto;
+  }
+  .menu-btn:hover { background: rgba(192,132,252,0.1); border-color: rgba(192,132,252,0.6); }
+  .menu-icon { font-size: 32px; }
+  .menu-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .menu-desc { font-size: 12px; color: rgba(240,232,254,0.45); }
+
+  .primary-btn {
+    background: linear-gradient(135deg,#c084fc,#9333ea);
+    border: none; color: #190a35;
+    border-radius: 14px; padding: 16px 40px;
+    font-weight: 800; font-size: 16px;
+    cursor: pointer; width: 100%; max-width: 380px;
+    display: block; margin: 12px auto 0 auto;
+  }
+  .primary-btn:disabled { background: rgba(255,255,255,0.05); color: rgba(240,232,254,0.3); cursor: not-allowed; }
+
+  .center-col { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .hero-emoji { font-size: 56px; margin-bottom: 6px; text-align: center; }
+  .hero-label { font-size: 20px; font-weight: 300; color: rgba(240,232,254,0.8); letter-spacing: 1px; text-align: center; }
+  .hero-sub { font-size: 12px; color: rgba(240,232,254,0.4); margin-top: 4px; text-align: center; }
+
+  /* Flashcard */
+  .flashcard {
+    background: linear-gradient(135deg,rgba(192,132,252,0.1),rgba(255,255,255,0.03));
+    border: 1px solid rgba(192,132,252,0.35);
+    border-radius: 24px;
+    padding: 32px 20px;
     text-align: center;
-    font-weight: 500;
-  }
-  .grid-menu {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-height: 230px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    margin-bottom: 20px;
     width: 100%;
-    max-width: 440px;
   }
-  .grid-menu .full-width {
-    grid-column: span 2;
+  .flashcard.flipped { background: linear-gradient(135deg,rgba(39,174,96,0.18),rgba(39,174,96,0.04)); border-color: rgba(39,174,96,0.5); }
+  .hanzi-big { font-size: 56px; line-height: 1; }
+  .pinyin-text { font-size: 18px; color: #c084fc; letter-spacing: 2px; }
+  .meaning-text { font-size: 14px; color: rgba(240,232,254,0.9); text-align: center; max-width: 100%; line-height: 1.5; padding: 0 8px; }
+  .hint-text { font-size: 11px; color: rgba(240,232,254,0.3); text-align: center; }
+
+  .row-controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; width: 100%; }
+  .ctrl-btn {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+    color: #f0e8fe; border-radius: 12px; padding: 12px 20px; cursor: pointer; font-size: 18px;
   }
-  .menu-card {
-    background: rgba(255, 255, 255, 0.04);
+  .speak-btn {
+    background: linear-gradient(135deg,#9333ea,#7c3aed); border: none; color: white;
+    border-radius: 12px; padding: 12px 24px; cursor: pointer; font-size: 15px; font-weight: 700; flex: 1; max-width: 240px;
+  }
+  .toggle-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    color: #f0e8fe; border-radius: 10px; padding: 8px 16px; cursor: pointer; font-size: 13px;
+  }
+  .toggle-btn.active { background: rgba(192,132,252,0.15); border-color: rgba(192,132,252,0.5); }
+
+  /* Controles de Voz inferiores */
+  .voice-controls-panel {
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(192, 132, 252, 0.15);
     border-radius: 16px;
-    padding: 24px 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(8px);
-  }
-  .menu-card:hover {
-    background: rgba(168, 85, 247, 0.15);
-    border-color: rgba(168, 85, 247, 0.5);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(168, 85, 247, 0.2);
-  }
-  .menu-card h2 { font-size: 22px; color: #fff; margin-bottom: 4px; }
-  .menu-card p { font-size: 13px; color: #a78bfa; }
-
-  /* Vista Principal de Estudio */
-  .study-container { display: flex; flex-direction: column; flex: 1; width: 100%; }
-  
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .stat-box {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    padding: 10px;
-    text-align: center;
-  }
-  .stat-val { font-size: 16px; font-weight: 700; color: #fff; }
-  .stat-lbl { font-size: 11px; color: #a78bfa; margin-top: 2px; }
-
-  /* Tarjeta de Carácter */
-  .flashcard {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(192, 132, 252, 0.2);
-    border-radius: 24px;
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    margin-bottom: auto;
-  }
-  .meta-tag {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: rgba(168,85,247,0.2);
-    border: 1px solid rgba(168,85,247,0.4);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    color: #e9d5ff;
-  }
-  
-  #writer-target {
-    width: 200px;
-    height: 200px;
-    background: rgba(255,255,255,0.02);
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.05);
-    margin: 20px 0;
-    cursor: pointer;
-  }
-
-  .info-reveal-box { width: 100%; text-align: center; min-height: 90px; margin-top: 10px; }
-  .pinyin-text { font-size: 22px; font-weight: 600; color: #38bdf8; margin-bottom: 6px; }
-  .meaning-text { font-size: 16px; color: #e2e8f0; line-height: 1.4; padding: 0 10px; }
-  
-  .reveal-placeholder-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px dashed rgba(192, 132, 252, 0.4);
-    color: #c084fc;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 16px;
+    margin-top: 10px;
     width: 100%;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
   }
-  .reveal-placeholder-btn:hover {
-    background: rgba(168, 85, 247, 0.1);
-    border-style: solid;
-  }
-
-  /* Botones de acción inferiores */
-  .action-zone { width: 100%; margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
-  .btn-row { display: flex; gap: 12px; width: 100%; }
-  
-  .btn {
-    flex: 1;
-    border: none;
-    padding: 14px;
-    border-radius: 14px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-secondary { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-  .btn-secondary:hover { background: rgba(255,255,255,0.15); }
-  
-  .btn-success { background: #16a34a; color: #fff; box-shadow: 0 4px 14px rgba(22,163,74,0.4); }
-  .btn-success:hover { background: #15803d; transform: translateY(-1px); }
-  
-  .btn-danger { background: #dc2626; color: #fff; box-shadow: 0 4px 14px rgba(220,38,38,0.4); }
-  .btn-danger:hover { background: #b91c1c; transform: translateY(-1px); }
-
-  /* Vista de Exploración */
-  .browse-container { display: flex; flex-direction: column; flex: 1; width: 100%; }
-  .search-box {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(192, 132, 252, 0.2);
-    padding: 12px 16px;
-    border-radius: 12px;
-    color: #fff;
-    font-size: 15px;
-    margin-bottom: 16px;
-    outline: none;
-  }
-  .search-box:focus { border-color: #a855f7; box-shadow: 0 0 0 2px rgba(168,85,247,0.2); }
-  
-  .words-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
-    max-height: calc(100vh - 180px);
-    padding-right: 4px;
-  }
-  .word-row {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 14px;
-    padding: 12px 16px;
+  .voice-control-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 10px;
   }
-  .word-row.reinforced {
-    border-color: rgba(234,179,8,0.3);
-    background: linear-gradient(90deg, rgba(234,179,8,0.03), transparent);
-  }
-  .word-left-block { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-  .word-top-meta { display: flex; align-items: center; gap: 12px; }
-  .word-course-tag {
-    font-size: 11px;
-    background: rgba(255,255,255,0.1);
-    padding: 2px 6px;
-    border-radius: 6px;
-    color: #cbd5e1;
-  }
-  .word-pinyin { font-size: 14px; color: #38bdf8; font-weight: 500; }
-  .word-meaning { font-size: 13px; color: #94a3b8; line-height: 1.4; }
-  
-  .play-icon-btn {
-    background: rgba(255,255,255,0.05);
-    border: none;
-    color: #fff;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+  .voice-control-row:last-child { margin-bottom: 0; }
+  .voice-label { font-size: 12px; color: rgba(240, 232, 254, 0.5); }
+  .voice-select {
+    background: #251343;
+    border: 1px solid rgba(192, 132, 252, 0.3);
+    color: #f0e8fe;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    outline: none;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: background 0.2s;
+    flex: 1;
+    max-width: 240px;
   }
-  .play-icon-btn:hover { background: rgba(255,255,255,0.15); }
-  .weight-badge {
-    font-size: 11px;
-    background: rgba(234,179,8,0.2);
-    color: #fde047;
-    border: 1px solid rgba(234,179,8,0.4);
-    padding: 2px 6px;
-    border-radius: 8px;
-    margin-right: 8px;
+  .speed-container { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 240px; }
+  .speed-slider {
+    flex: 1;
+    accent-color: #c084fc;
+    cursor: pointer;
   }
-  .word-right-block { display: flex; align-items: center; }
+  .speed-val { font-size: 12px; color: #c084fc; font-weight: bold; min-width: 40px; text-align: right; }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  /* Quiz */
+  .progress-text { font-size: 11px; color: rgba(240,232,254,0.4); margin-bottom: 5px; text-align: center; }
+  .progress-bar-bg { background: rgba(255,255,255,0.07); border-radius: 8px; height: 5px; margin-bottom: 16px; }
+  .progress-bar-fill { background: linear-gradient(90deg,#c084fc,#9333ea); border-radius: 8px; height: 5px; transition: width 0.4s; }
 
-  /* Estilos para Hanzis coloreados según tono */
-  .tone1 { color: #ff4d4d !important; }
-  .tone2 { color: #22c55e !important; }
-  .tone3 { color: #eab308 !important; }
-  .tone4 { color: #3b82f6 !important; }
-  .tone5 { color: #94a3b8 !important; }
+  .quiz-card {
+    background: rgba(192,132,252,0.06);
+    border: 1px solid rgba(192,132,252,0.25);
+    border-radius: 20px;
+    padding: 24px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+  .quiz-card.correct { border-color: rgba(39,174,96,0.6); }
+  .quiz-card.wrong { border-color: rgba(231,76,60,0.5); }
+
+  .big-play-btn {
+    background: linear-gradient(135deg,#9333ea,#7c3aed); border: none; color: white;
+    border-radius: 50%; width: 76px; height: 76px; cursor: pointer; font-size: 26px;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto;
+    box-shadow: 0 0 28px rgba(147,51,234,0.5);
+  }
+
+  .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opt-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: #f0e8fe;
+    border-radius: 14px; padding: 14px 10px; cursor: pointer; font-size: 13px; text-align: center;
+    transition: all 0.3s; font-weight: 500; line-height: 1.4; min-height: 64px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .opt-btn.correct { background: rgba(39,174,96,0.2); border-color: #27ae60; color: #5dfc8a; }
+  .opt-btn.wrong { background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #ff8080; }
+
+  /* Filas de Vocabulario para iPhone/Móviles */
+  .search-input {
+    width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(192,132,252,0.3);
+    border-radius: 12px; padding: 12px 16px; color: #f0e8fe; font-size: 14px;
+    box-sizing: border-box; margin-bottom: 16px; outline: none;
+  }
+  .search-input::placeholder { color: rgba(240,232,254,0.4); }
+
+  .word-row {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; padding: 16px; 
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between; 
+    gap: 12px; margin-bottom: 12px; width: 100%;
+  }
+  .word-row.reinforced { border-color: rgba(192,132,252,0.4); }
+  
+  .word-left-block { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+  .word-top-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
+  .word-course-tag { font-size: 14px; color: #b08bf8; font-weight: 700; white-space: nowrap; }
+  
+  /* Ajuste para que el contenedor Hanzi sea clicable con buen tamaño */
+  .word-hanzi { font-size: 32px; display: inline-flex; align-items: center; justify-content: center; font-weight: 500; line-height: 1.1; cursor: pointer; }
+  .word-pinyin { color: #c084fc; font-size: 15px; font-weight: 600; white-space: nowrap; }
+  .word-meaning { font-size: 14px; color: rgba(240,232,254,0.7); line-height: 1.4; word-break: break-word; }
+  
+  .word-right-block { display: flex; flex-direction: column; align-items: center; gap: 8px; justify-content: center; shrink: 0; }
+  .weight-badge { font-size: 10px; color: #c084fc; background: rgba(192,132,252,0.15); border-radius: 4px; padding: 2px 6px; font-weight: 700; }
+  .play-icon-btn {
+    background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; color: white;
+    border-radius: 12px; width: 44px; height: 44px; cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center; transition: transform 0.1s; shrink: 0;
+  }
+  .play-icon-btn:active { transform: scale(0.95); }
+
+  /* NUEVO: Modal estilizado de trazos (Hanzi Writer) */
+  .writer-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 7, 30, 0.85); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 16px;
+  }
+  .writer-modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .writer-modal {
+    background: #22123b; border: 1px solid rgba(192,132,252,0.4);
+    border-radius: 24px; width: 100%; max-width: 340px; padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+  .writer-modal-header { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+  .writer-modal-title { font-size: 16px; font-weight: 700; color: #c084fc; }
+  .writer-close-btn { background: transparent; border: none; color: rgba(240,232,254,0.5); font-size: 22px; cursor: pointer; }
+  
+  /* Selector de pestañas para palabras compuestas (varios caracteres) */
+  .writer-tabs { display: flex; gap: 6px; width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: center; }
+  .writer-tab {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: #f0e8fe; border-radius: 8px; padding: 6px 12px; font-size: 16px; cursor: pointer;
+  }
+  .writer-tab.active { background: rgba(192,132,252,0.25); border-color: #c084fc; color: white; font-weight: 700; }
+
+  /* Lienzo del SVG */
+  .writer-canvas-holder {
+    background: #190a35; border: 1px solid rgba(192,132,252,0.2); border-radius: 16px;
+    width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .writer-controls { display: flex; gap: 10px; width: 100%; }
+  .writer-btn {
+    flex: 1; padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 700; text-align: center;
+  }
+  .writer-btn-anim { background: #9333ea; color: white; }
+  .writer-btn-quiz { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #f0e8fe; }
+
+  .empty-state { text-align: center; color: rgba(240,232,254,0.4); padding: 40px 20px; font-size: 14px; }
+  .footer-link {
+    background: transparent; border: 1px solid rgba(255,255,255,0.1); color: rgba(240,232,254,0.3);
+    border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 11px; display: block; margin: 16px auto 0 auto;
+  }
+  .warning-text { font-size: 12px; color: rgba(192,132,252,0.7); margin-top: 4px; text-align: center; }
+  .credit-text { font-size: 11px; color: rgba(240,232,254,0.35); text-align: center; margin-top: 14px; font-style: italic; }
 </style>
 </head>
 <body>
 
 <div id="app"></div>
 
+<div id="writer-overlay" class="writer-modal-overlay" onclick="closeStrokeModal(event)">
+  <div class="writer-modal" onclick="event.stopPropagation()">
+    <div class="writer-modal-header">
+      <span class="writer-modal-title">Orden de trazos</span>
+      <button class="writer-close-btn" onclick="closeStrokeModal(null)">✕</button>
+    </div>
+    <div id="writer-tabs-container" class="writer-tabs"></div>
+    <div class="writer-canvas-holder">
+      <div id="writer-target"></div>
+    </div>
+    <div class="writer-controls">
+      <button class="writer-btn writer-btn-anim" onclick="triggerStrokeAnim()">🎬 Animar</button>
+      <button class="writer-btn writer-btn-quiz" onclick="triggerStrokeQuiz()">✍ Practice</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// --- BASE DE DATOS INCRUSTADA ---
-const DATA_DICTIONARY = [
-  { "hanzi": "经验", "pinyin": "jīng yàn", "meaning": "experiencia en alguna tarea", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "诚实", "pinyin": "chéng shí", "meaning": "honesto, sincero, honestidad, sinceridad, confiable", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "平时", "pinyin": "píng shí", "meaning": "normalmente, habitualmente, en circunstancias normales, en el día a día", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "验", "pinyin": "yàn", "meaning": "probar, comprobar, verificar, examinar", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "积累", "pinyin": "jī lěi", "meaning": "acumular, acumulación (cosas intangibles como experiencia...)", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "积", "pinyin": "jī", "meaning": "acumular, amontonar, reunir poco a poco", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "优点", "pinyin": "yóu diǎn", "meaning": "ventaja, punto fuerte, virtud", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "优", "pinyin": "yóu", "meaning": "excelente, superior, sobresaliente", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "诚", "pinyin": "chéng", "meaning": "sinceridad, honestidad", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "硕", "pinyin": "shuò", "meaning": "grande, enorme, destacado", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "厉害", "pinyin": "lì hài", "meaning": "tremendo, increíble, alucinante, impresionante", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "教育学", "pinyin": "jiào yù xué", "meaning": "pedagogía, ciencias de la educación", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "厉", "pinyin": "lì", "meaning": "estricto, fuerte, violento", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "教育", "pinyin": "jiào yù", "meaning": "educar, educación", "level": "HSK4", "curso": "4下", "tema": "9" },
-  { "hanzi": "硕士", "pinyin": "shuò ..." }, // ... Contenido de diccionario acortado en este log por brevedad, usa tu array completo aquí
-  { "hanzi": "春暖花开", "pinyin": "chūn nuǎn huā kāi", "meaning": "Frase estilo chengyu: “Cuando la primavera calienta, las flores se abren”", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "与", "pinyin": "yǔ", "meaning": "...y... , ...con... , ...junto con...", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "于是", "pinyin": "yúshì", "meaning": "por eso, por lo tanto (coloquial)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "脱掉", "pinyin": "tuōdiào", "meaning": "quitarse la ropa, complementos, calzado…", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "最终", "pinyin": "zuìzhōng", "meaning": "finalmente, al final, en última instancia", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "脱", "pinyin": "tuō", "meaning": "desnudarse, versión monosílaba de 脱掉", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "由于", "pinyin": "yóu_yú", "meaning": "debido a…(formal). no necesita conectores posteriores del tipo 所以，于是，因址…", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "用力", "pinyin": "yònglì", "meaning": "con fuerza, hacer fuerza, esforzarse", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "由", "pinyin": "yóu", "meaning": "causado por…", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "察", "pinyin": "chá", "meaning": "examinar, observar con atención, inspeccionar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "十字路口", "pinyin": "shízì lùkǒu", "meaning": "cruce en forma de cruz", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "抱歉", "pinyin": "bàoqiàn", "meaning": "sentirlo, disculparse, estar apenado (抱歉,+frase)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "警察", "pinyin": "jǐngchá", "meaning": "policía", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "抱", "pinyin": "bào", "meaning": "abrazar, sostener, tener entre los brazos", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "警", "pinyin": "jǐng", "meaning": "advertir, alertar, avisar, estar en guardia", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "歉", "pinyin": "qiàn", "meaning": "sentirse en deuda, avergonzado, apenado…", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "款", "pinyin": "kuǎn", "meaning": "clasificador específico para \"modelos\", \"estilos\", “diseños”…", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "白费", "pinyin": "báifèi", "meaning": "desperdiciar, malgastar en vano, esfuerzo perdido, en balde", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "交警", "pinyin": "jiāojǐng", "meaning": "policía de tráfico", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "适应", "pinyin": "shìyìng", "meaning": "adaptarse a…( puede sustituirse por 习惯)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "现有", "pinyin": "xiànyǒu", "meaning": "existente, actual", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "打招呼", "pinyin": "dǎzhāohu", "meaning": "saludar, saludo", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "条件", "pinyin": "tiáojiàn", "meaning": "condiciones, requisitos para algo, condiciones en la que algo se encuentra (literal y figurado)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "招呼", "pinyin": "zhāohu", "meaning": "saludo", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "结果", "pinyin": "jiéguǒ", "meaning": "resultado de algo, y al final… (sorpresa)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "材料", "pinyin": "cáiliào", "meaning": "material ya sea físico (materia prima) o informativo (materia de una asignatura o documentación para hacer un trámite)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "材", "pinyin": "cái", "meaning": "material, “especialmente madera” o “materia prima”", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "招", "pinyin": "zhāo", "meaning": "llama, atraer, invitar, hacer señas con la mano", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "呼", "pinyin": "hū", "meaning": "exhalar, respirar, gritar, llamar, clamar, emitir un sonido fuerte", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "顺序", "pinyin": "shùnxù", "meaning": "orden, secuencia, sucesión, orden correcto", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "帮一把", "pinyin": "bāng yìbǎ", "meaning": "echar una mano", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "序", "pinyin": "xù", "meaning": "orden, secuencia, sucesión", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "整理", "pinyin": "zhěnglǐ", "meaning": "ordenar, organizar, arreglar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "正确", "pinyin": "zhèngquè", "meaning": "correcto, acertado", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "整", "pinyin": "zhěng", "meaning": "todo, entero, completo, arreglar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "确", "pinyin": "què", "meaning": "verdadero", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "理", "pinyin": "lǐ", "meaning": "orden, principio, manejar, organizar, razón", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "坚持", "pinyin": "jiānchí", "meaning": "perseverar, insistir, mantenerse firme", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "方法", "pinyin": "fāngfǎ", "meaning": "método, forma de hacer algo", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "坚", "pinyin": "jiān", "meaning": "firme, resistente, duro", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "部", "pinyin": "bù", "meaning": "clasificador (películas, series, obras musicales, novelas de envergadura / diccionarios)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "浪费", "pinyin": "làngfèi", "meaning": "malgastar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "演", "pinyin": "yǎn", "meaning": "interpretar, actuar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "浪", "pinyin": "làng", "meaning": "olas/loco, fiestero", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "抱住", "pinyin": "bàozhù", "meaning": "abrazar con fuerza", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "给出", "pinyin": "gěichū", "meaning": "dar, ofrecer, proporcionar, presentar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "拉", "pinyin": "lā", "meaning": "tirar, arrastrar, traer hacia uno / tocar instrumento de cuerda", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "拉近", "pinyin": "lājìn", "meaning": "acercar, reducir distancia (literal y figurado)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "难受", "pinyin": "nánshòu", "meaning": "sentirse o encontrarse mal", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "面试", "pinyin": "miànshì", "meaning": "entrevista (laboral, selección, evaluación…)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "特点", "pinyin": "tèdiǎn", "meaning": "característica, rasgo distintivo", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "举办", "pinyin": "jǔbàn", "meaning": "organizar, montar (da importancia al que lo organiza)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "友好", "pinyin": "yǒuhǎo", "meaning": "amable, cordial, amistoso", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "举", "pinyin": "jǔ", "meaning": "alzar, elegir; citar, enumerar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "讨论", "pinyin": "tǎolùn", "meaning": "discutir, debatir, analizar un tema", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "讨", "pinyin": "tǎo", "meaning": "solicitar, pedir, demandar / casarse (con una mujer)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "道歉", "pinyin": "dàoqiàn", "meaning": "disculparse, pedir perdón, disculpa. requiere objeto o contexto, (向+persona+道歉)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "论", "pinyin": "lùn", "meaning": "discutir, hablar, argumentar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "歉意", "pinyin": "qiànyì", "meaning": "disculpa, pesar, sentimiento de disculpa (sustantivo muy formal)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "梦", "pinyin": "mèng", "meaning": "sueño (lo que se sueña)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "招人", "pinyin": "zhāorén", "meaning": "contratar personal", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "做梦", "pinyin": "zuòmèng", "meaning": "soñar", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "整齐", "pinyin": "zhěngqí", "meaning": "orden, en orden, ordenadamente", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "噩梦", "pinyin": "èmèng", "meaning": "pesadilla", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "森林", "pinyin": "sēnlín", "meaning": "bosque, selva", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "齐", "pinyin": "qí", "meaning": "uniforme, parejo, igual / estar todos presentes", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "森", "pinyin": "sēn", "meaning": "boscoso, oscuro, sombrío", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "树林", "pinyin": "shùlin", "meaning": "arboleda, zona arbolada", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "熟悉", "pinyin": "shúxī", "meaning": "estar familiarizado con …, conocer bien…, tener experiencia o costumbre con…", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "林", "pinyin": "lín", "meaning": "conjunto de árboles", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "熟", "pinyin": "shú", "meaning": "maduro, experto", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "悉", "pinyin": "xī", "meaning": "conocer a fondo", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "西红柿", "pinyin": "xīhóngshì", "meaning": "tomate", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "保证", "pinyin": "bǎozhèng", "meaning": "garantizar, asegurar, prometer / garantía", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "柿", "pinyin": "shì", "meaning": "caqui", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "证", "pinyin": "zhèng", "meaning": "documento, certificado, prueba", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "理解", "pinyin": "lǐjiě", "meaning": "entender, comprender de verdad algo que requiere reflexión, o con ideas complejas o en asuntos de empatía emocional", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "证明", "pinyin": "zhèngmíng", "meaning": "probar, evidenciar, demostrar certificar / prueba, evidencia, certificado", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "散步", "pinyin": "sànbù", "meaning": "caminar por placer, dar un paseo. (走走 es estirar las piernas)", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "散", "pinyin": "sàn", "meaning": "dispersar, dispersarse, deshacerse / terminar (reunión, acto) / esparcir, extender, distribuir", "level": "HSK4", "curso": "4下", "tema": "10" },
-  { "hanzi": "... ..." } // Asegúrate de rellenar con tu base de datos JSON unificada completa
+const COURSE_FILES = [
+  { id: "HSK1",   file: "data/HSK1.json",   label: "Curso 1" },
+  { id: "HSK2",   file: "data/HSK2.json",   label: "Curso 2" },
+  { id: "HSK3_1", file: "data/HSK3_1.json", label: "Curso 3 上" },
+  { id: "HSK3_2", file: "data/HSK3_2.json", label: "Curso 3 下" },
+  { id: "HSK4_1", file: "data/HSK4_1.json", label: "Curso 4 上" },
+  { id: "HSK4_2", file: "data/HSK4_2.json", label: "Curso 4 中" },
+  { id: "HSK4_3", file: "data/HSK4_3.json", label: "Curso 4 下" }
 ];
 
 const COURSE_LEVEL_LABELS = {
-  "4上": "HSK 4 Superior (T1-T5)",
-  "4下": "HSK 4 Inferior (T6-T10)",
-  "all": "Todos los cursos"
+  "HSK1": "HSK 1",
+  "HSK2": "HSK 2",
+  "HSK3_1": "HSK 3",
+  "HSK3_2": "HSK 3",
+  "HSK4_1": "HSK 4",
+  "HSK4_2": "HSK 4",
+  "HSK4_3": "HSK 4"
 };
 
-// --- CONFIGURACIÓN DE TONOS ---
-const PINYIN_TONE_MAP = [
-  { re: /[āāáǎà]/i, t: 1 }, { re: /[ēēéěè]/i, t: 2 }, { re: /[īīíǐì]/i, t: 3 },
-  { re: /[ōōóǒò]/i, t: 4 }, { re: /[ūūúǔù]/i, t: 5 }, { re: /[ǖǖǘǚǜ]/i, t: 6 }
-];
-
-function getToneFromPinyin(pinyinStr) {
-  if (!pinyinStr) return 5;
-  const clean = pinyinStr.trim().toLowerCase();
-  if (/[āēīōūǖ]/i.test(clean)) return 1;
-  if (/[áéíóúǘ]/i.test(clean)) return 2;
-  if (/[ǎěǐǒǔǚ]/i.test(clean)) return 3;
-  if (/[àèìòùǜ]/i.test(clean)) return 4;
-  return 5;
-}
-
-// --- ESTADO GLOBAL ---
-let state = {
-  view: "SELECT_COURSE", // SELECT_COURSE, SELECT_TEMA, STUDY, BROWSE
-  selectedCourse: null,  // "4上", "4下" o "all"
-  selectedTema: null,    // "9", "10", o "all"
-  words: [],             // Palabras filtradas bajo los criterios elegidos
-  currentIndex: 0,
-  isRevealed: false,
-  browseSearch: "",
-  weights: {}            // Guardará penalizaciones por fallos locales
+const TONE_MAP = {
+  'ā':1,'ē':1,'ī':1,'ō':1,'ū':1,'ǖ':1,
+  'á':2,'é':2,'í':2,'ó':2,'ú':2,'ǘ':2,
+  'ǎ':3,'ě':3,'ǐ':3,'ǒ':3,'ǔ':3,'ǚ':3,
+  'à':4,'è':4,'ì':4,'ò':4,'ù':4,'ǜ':4,
 };
 
-let writerInstance = null;
+const TONE_COLORS = { "1":"#ff2a2a","2":"#ffb000","3":"#27ae60","4":"#2980b9","0":"#a78bfa" };
 
-// --- FUNCIONES AUXILIARES DE ELEMENTOS ---
-function el(tag, attrs = {}, children = []) {
-  const element = document.createElement(tag);
-  for (let key in attrs) {
-    if (key.startsWith("on")) {
-      element.addEventListener(key.substring(2).toLowerCase(), attrs[key]);
-    } else if (key === "class" && attrs[key]) {
-      element.className = attrs[key];
-    } else if (attrs[key] !== null && attrs[key] !== undefined) {
-      element.setAttribute(key, attrs[key]);
-    }
+function getToneOfSyllable(syll) {
+  for (const ch of syll) {
+    if (TONE_MAP[ch] !== undefined) return TONE_MAP[ch];
   }
-  if (typeof children === "string") {
-    element.textContent = children;
-  } else if (Array.isArray(children)) {
-    children.forEach(c => { if(c) element.appendChild(c); });
+  return 0;
+}
+
+function computeTone(hanzi, pinyin) {
+  const clean = (pinyin || "").replace(/[?？！!…,，.。]/g, "").trim();
+  const syllables = clean.split(/\s+/).filter(Boolean);
+  const nChars = (hanzi || "").length;
+  let tones = syllables.map(getToneOfSyllable);
+  if (tones.length === 0) tones = [0];
+  if (tones.length < nChars) {
+    while (tones.length < nChars) tones.push(tones[tones.length - 1]);
+  } else if (tones.length > nChars && nChars > 0) {
+    tones = tones.slice(0, nChars);
   }
-  return element;
+  return tones.join("-");
 }
 
-function coloredHanziEl(hanzi, explicitTone, fontSize = 70) {
-  const container = el("div", { style: `display:flex; gap:2px; justify-content:center; font-size:${fontSize}px; font-weight:bold;` });
-  for (let i = 0; i < hanzi.length; i++) {
-    const char = hanzi[i];
-    let t = explicitTone || 5;
-    if (!explicitTone && state.words[state.currentIndex]) {
-      const pinyinParts = state.words[state.currentIndex].pinyin.split(" ");
-      if (pinyinParts[i]) t = getToneFromPinyin(pinyinParts[i]);
-    }
-    container.appendChild(el("span", { class: `tone${t}` }, char));
-  }
-  return container;
-}
+function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
 
-// --- LÓGICA DE NEGOCIO ---
-function initApp() {
-  render();
-}
-
-function selectCourse(course) {
-  state.selectedCourse = course;
-  state.view = "SELECT_TEMA";
-  state.selectedTema = null;
-  render();
-}
-
-function selectTema(tema) {
-  state.selectedTema = tema;
-  
-  // Filtrar diccionario basado en curso Y tema elegido
-  state.words = DATA_DICTIONARY.filter(w => {
-    const matchCourse = (state.selectedCourse === "all" || w.curso === state.selectedCourse);
-    const matchTema = (tema === "all" || w.tema === tema);
-    return matchCourse && matchTema;
-  });
-
-  // Mezclar aleatoriamente el set de estudio inicial
-  state.words.sort(() => Math.random() - 0.5);
-  
-  state.currentIndex = 0;
-  state.isRevealed = false;
-  state.weights = {};
-  state.view = "STUDY";
-  
-  render();
-  setTimeout(initWriter, 50);
-}
-
-function initWriter() {
-  if (state.view !== "STUDY" || state.words.length === 0) return;
-  const currentWord = state.words[state.currentIndex];
-  
-  document.getElementById("writer-target").innerHTML = "";
-  
-  writerInstance = HanziWriter.create('writer-target', currentWord.hanzi, {
-    width: 200,
-    height: 200,
-    padding: 20,
-    showOutline: true,
-    strokeAnimationSpeed: 1.2,
-    delayBetweenStrokes: 150,
-    outlineColor: 'rgba(255,255,255,0.06)',
-    strokeColor: '#c084fc'
-  });
-}
-
-function handleReveal() {
-  state.isRevealed = true;
-  render();
-  if (writerInstance) writerInstance.animateCharacter();
-}
-
-function handleAnswer(isCorrect) {
-  const idx = state.currentIndex;
-  if (!state.weights[idx]) state.weights[idx] = 1;
-
-  if (isCorrect) {
-    state.weights[idx] -= 1;
-    if (state.weights[idx] <= 0) {
-      // Correcto absoluto: avanza o termina ciclo
-    }
-  } else {
-    state.weights[idx] += 2; // Penaliza inyectando repetición obligatoria al final
-    const currentWord = state.words[idx];
-    state.words.push({ ...currentWord }); // Duplica dinámicamente al final de la cola
-  }
-
-  if (state.currentIndex < state.words.length - 1) {
-    state.currentIndex++;
-    state.isRevealed = false;
-    render();
-    initWriter();
-  } else {
-    alert("¡Felicidades! Has completado todo el vocabulario seleccionado.");
-    goBack();
-  }
-}
+let currentExternalAudio = null;
+let selectedVoiceType = localStorage.getItem("hanzi-voice-type") || "youdao";
+let selectedVoiceSpeed = parseFloat(localStorage.getItem("hanzi-voice-speed") || "1.0");
 
 function speak(text) {
-  if ('speechSynthesis' in window) {
+  if (!text) return;
+  if (typeof speechSynthesis !== 'undefined') { speechSynthesis.cancel(); }
+  if (currentExternalAudio) { currentExternalAudio.pause(); currentExternalAudio.currentTime = 0; }
+
+  if (selectedVoiceType === "youdao") {
+    const url = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
+    currentExternalAudio = new Audio(url);
+    currentExternalAudio.play().catch(() => {});
+    return;
+  }
+
+  if (typeof SpeechSynthesisUtterance !== 'undefined') {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
-    window.speechSynthesis.speak(utterance);
+    utterance.rate = selectedVoiceSpeed;
+    const zhVoices = speechSynthesis.getVoices().filter(v => 
+      v.lang.toLowerCase().startsWith('zh-cn') || 
+      v.lang.toLowerCase().startsWith('zh_cn') ||
+      v.lang.toLowerCase().includes('zh')
+    );
+    if (zhVoices.length > 0) {
+      if (selectedVoiceType === "fluida" && zhVoices[0]) utterance.voice = zhVoices[0];
+      else if (selectedVoiceType === "energica" && zhVoices[1]) utterance.voice = zhVoices[1];
+      else if (selectedVoiceType === "locutor" && zhVoices[2]) utterance.voice = zhVoices[2];
+      else utterance.voice = zhVoices[0];
+    }
+    speechSynthesis.speak(utterance);
   }
 }
 
-function goBack() {
-  if (state.view === "STUDY" || state.view === "BROWSE") {
-    state.view = "SELECT_TEMA";
-  } else if (state.view === "SELECT_TEMA") {
-    state.view = "SELECT_COURSE";
+if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
+}
+
+const STORAGE_KEY = "hanzis-weights";
+
+function loadWeights() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) { return {}; }
+}
+function saveWeights(weights) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(weights)); } catch (e) {}
+}
+
+const state = {
+  screen: "loading",        
+  allWords: [],              
+  availableCourses: [],       
+  selectedCourses: [],
+  words: [],                 
+  persistedWeights: {},      
+  weights: {},                
+  shuffled: [],
+  cardIndex: 0,
+  flipped: false,
+  showPinyin: true,
+  browseSearch: "",
+  quiz: { queue: [], pos: 0, options: [], selected: null, score: 0, total: 0, done: false },
+};
+
+function wordKey(w) { return w.hanzi + "|" + w.pinyin; }
+
+async function loadAllCourses() {
+  const results = [];
+  for (const course of COURSE_FILES) {
+    try {
+      const res = await fetch(course.file);
+      if (!res.ok) continue; 
+      const data = await res.json();
+      data.forEach(entry => {
+        entry._course = course.id;
+        entry.tone = computeTone(entry.hanzi, entry.pinyin);
+      });
+      results.push({ ...course, words: data });
+    } catch (e) { continue; }
   }
+  return results;
+}
+
+async function init() {
+  state.persistedWeights = loadWeights();
+  const courses = await loadAllCourses();
+  state.availableCourses = courses;
+  state.allWords = courses.flatMap(c => c.words);
+  state.selectedCourses = courses.map(c => c.id); 
+  state.screen = state.availableCourses.length ? "course-select" : "error";
   render();
 }
 
-function switchView(targetView) {
-  state.view = targetView;
-  render();
-  if (targetView === "STUDY") setTimeout(initWriter, 50);
+function getFilteredWords() {
+  return state.allWords.filter(w => state.selectedCourses.includes(w._course));
 }
 
-// --- RENDERIZADO COMPLETO (VIRTUAL DOM MANUAL) ---
-function render() {
-  const root = document.getElementById("app");
-  root.innerHTML = "";
+function buildQueue(words, weights) {
+  const queue = [];
+  words.forEach((_, i) => {
+    const reps = Math.max(1, Math.min(weights[i] || 1, 5));
+    for (let r = 0; r < reps; r++) queue.push(i);
+  });
+  return queue.sort(() => Math.random() - 0.5);
+}
 
-  // 1. Cabecera Estática / Dinámica
-  const headerLeftBtn = (state.view !== "SELECT_COURSE") 
-    ? el("button", { class: "back-btn", onclick: goBack }, "← Volver") 
-    : el("div");
+function genOptions(words, idx) {
+  const word = words[idx];
+  const pool = words.filter(w => w.hanzi !== word.hanzi);
+  const wrong = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
+  return [...wrong, word].sort(() => Math.random() - 0.5);
+}
 
-  const headerRightBtn = (state.view === "STUDY")
-    ? el("button", { class: "back-btn", onclick: () => switchView("BROWSE") }, "🔍 Lista")
-    : (state.view === "BROWSE")
-      ? el("button", { class: "back-btn", onclick: () => switchView("STUDY") }, "📖 Estudiar")
-      : el("div");
+function startQuiz() {
+  const words = state.words;
+  const len = Math.min(20, words.length);
+  const q = buildQueue(words, state.weights).slice(0, len);
+  state.quiz = { queue: q, pos: 0, options: genOptions(words, q[0]), selected: null, score: 0, total: 0, done: false };
+  state.screen = "quiz";
+  render();
+}
 
-  const header = el("div", { class: "header" }, [
-    headerLeftBtn,
-    el("h1", {}, "Hanzis \u00B7 \u7EC3\u4E60"),
-    headerRightBtn
-  ]);
-  root.appendChild(header);
+function answerQuiz(optIdx) {
+  if (state.quiz.selected !== null) return;
+  const words = state.words;
+  const wordIdx = state.quiz.queue[state.quiz.pos];
+  const current = words[wordIdx];
+  const opt = state.quiz.options[optIdx];
+  const correct = opt.hanzi === current.hanzi;
+  state.quiz.selected = optIdx;
 
-  const main = el("div", { class: "main-content" });
+  if (correct) {
+    speak(current.hanzi);
+    state.quiz.score++;
+    state.weights[wordIdx] = Math.max(1, (state.weights[wordIdx] || 1) - 1);
+  } else {
+    state.weights[wordIdx] = Math.min(5, (state.weights[wordIdx] || 1) + 2);
+  }
+  state.persistedWeights[wordKey(current)] = state.weights[wordIdx];
+  saveWeights(state.persistedWeights);
 
-  // 2. Control de Vistas
-  if (state.view === "SELECT_COURSE") {
-    // --- MENÚ 1: SELECCIÓN DE CURSO ---
-    const cursosDisponibles = ["4上", "4下", "all"];
-    const grid = el("div", { class: "grid-menu" });
-    
-    cursosDisponibles.forEach(c => {
-      const isAll = c === "all";
-      const card = el("div", { 
-        class: "menu-card" + (isAll ? " full-width" : ""),
-        onclick: () => selectCourse(c) 
-      }, [
-        el("h2", {}, c === "all" ? "Todo" : `Curso ${c}`),
-        el("p", {}, COURSE_LEVEL_LABELS[c] || "")
-      ]);
-      grid.appendChild(card);
-    });
+  state.quiz.total++;
+  render();
 
-    main.appendChild(el("div", { class: "menu-container" }, [
-      el("div", { class: "menu-title" }, "Selecciona el curso que deseas practicar"),
-      grid
-    ]));
-
-  } else if (state.view === "SELECT_TEMA") {
-    // --- MENÚ 2: SELECCIÓN DE TEMA (NUEVA FUNCIONALIDAD) ---
-    // Extraer temas únicos disponibles basados en el curso seleccionado anteriormente
-    const temasSet = new Set();
-    DATA_DICTIONARY.forEach(w => {
-      if (state.selectedCourse === "all" || w.curso === state.selectedCourse) {
-        if (w.tema) temasSet.add(w.tema);
-      }
-    });
-    
-    const listaTemas = Array.from(temasSet).sort((a, b) => parseInt(a) - parseInt(b));
-    const grid = el("div", { class: "grid-menu" });
-    
-    // Tarjeta para estudiar todos los temas juntos
-    grid.appendChild(el("div", { class: "menu-card full-width", onclick: () => selectTema("all") }, [
-      el("h2", {}, "Todos los temas"),
-      el("p", {}, `Repasa el contenido completo del curso ${state.selectedCourse}`)
-    ]));
-
-    // Tarjetas individuales por cada tema extraído
-    listaTemas.forEach(t => {
-      const card = el("div", { class: "menu-card", onclick: () => selectTema(t) }, [
-        el("h2", {}, `Tema ${t}`),
-        el("p", {}, `Unidad estructurada ${t}`)
-      ]);
-      grid.appendChild(card);
-    });
-
-    main.appendChild(el("div", { class: "menu-container" }, [
-      el("div", { class: "menu-title" }, `Curso ${state.selectedCourse === 'all' ? 'Completo' : state.selectedCourse} \u2192 Selecciona el Tema`),
-      grid
-    ]));
-
-  } else if (state.view === "STUDY") {
-    // --- VISTA DE ESTUDIO ---
-    if (state.words.length === 0) {
-      main.appendChild(el("div", { style: "text-align:center; padding:40px; color:#a78bfa;" }, "No hay vocabulario que coincida con la selección."));
+  const quizLen = Math.min(20, words.length);
+  setTimeout(() => {
+    const next = state.quiz.pos + 1;
+    if (next >= state.quiz.queue.length || state.quiz.total >= quizLen) {
+      state.quiz.done = true;
     } else {
-      const currentWord = state.words[state.currentIndex];
-      
-      // Barra de estado superior
-      const stats = el("div", { class: "stats-bar" }, [
-        el("div", { class: "stat-box" }, [el("div", { class: "stat-val" }, `${state.currentIndex + 1}/${state.words.length}`), el("div", { class: "stat-lbl" }, "Progreso")]),
-        el("div", { class: "stat-box" }, [el("div", { class: "stat-val" }, state.selectedCourse.toUpperCase()), el("div", { class: "stat-lbl" }, "Curso")]),
-        el("div", { class: "stat-box" }, [el("div", { class: "stat-val" }, state.selectedTema === "all" ? "Todos" : `T${state.selectedTema}`), el("div", { class: "stat-lbl" }, "Tema")]),
-        el("div", { class: "stat-box" }, [el("div", { class: "stat-val" }, currentWord.level || "HSK"), el("div", { class: "stat-lbl" }, "Nivel")])
+      state.quiz.pos = next;
+      state.quiz.options = genOptions(words, state.quiz.queue[next]);
+      state.quiz.selected = null;
+    }
+    render();
+  }, 1600);
+}
+
+/* LÓGICA DE MANEJO DE HANZI WRITER (TRAZOS) */
+let currentWriterInstance = null;
+let currentActiveChar = "";
+
+function openStrokeModal(hanziString) {
+  if (!hanziString) return;
+  const characters = hanziString.replace(/[^\u4e00-\u9fa5]/g, "").split("");
+  if (characters.length === 0) return;
+
+  const overlay = document.getElementById("writer-overlay");
+  const tabsContainer = document.getElementById("writer-tabs-container");
+  tabsContainer.innerHTML = "";
+
+  characters.forEach((char, index) => {
+    const tab = document.createElement("button");
+    tab.className = "writer-tab" + (index === 0 ? " active" : "");
+    tab.textContent = char;
+    tab.onclick = () => {
+      document.querySelectorAll(".writer-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      loadHanziWriterChar(char);
+    };
+    tabsContainer.appendChild(tab);
+  });
+
+  overlay.classList.add("open");
+  loadHanziWriterChar(characters[0]);
+}
+
+function closeStrokeModal(e) {
+  if (e) e.stopPropagation();
+  document.getElementById("writer-overlay").classList.remove("open");
+  document.getElementById("writer-target").innerHTML = "";
+  currentWriterInstance = null;
+}
+
+function loadHanziWriterChar(char) {
+  currentActiveChar = char;
+  document.getElementById("writer-target").innerHTML = "";
+  
+  currentWriterInstance = HanziWriter.create('writer-target', char, {
+    width: 180,
+    height: 180,
+    padding: 15,
+    strokeColor: '#c084fc',
+    radicalColor: '#f43f5e',
+    outlineColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#190a35',
+    showOutline: true,
+    delayBetweenLoops: 1000
+  });
+  
+  currentWriterInstance.animateCharacter();
+}
+
+function triggerStrokeAnim() {
+  if (currentWriterInstance) {
+    currentWriterInstance.cancelQuiz();
+    currentWriterInstance.animateCharacter();
+  }
+}
+
+function triggerStrokeQuiz() {
+  if (currentWriterInstance) {
+    currentWriterInstance.quiz();
+  }
+}
+
+function el(tag, attrs = {}, children = []) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === null || v === false || v === undefined) continue; 
+    if (k === "class") node.className = v;
+    else if (k === "onclick") node.addEventListener("click", v);
+    else if (k === "oninput") node.addEventListener("input", v);
+    else if (k === "onchange") node.addEventListener("change", v);
+    else if (k === "html") node.innerHTML = v;
+    else node.setAttribute(k, v);
+  }
+  (Array.isArray(children) ? children : [children]).forEach(c => {
+    if (c == null) return;
+    if (typeof c === "string") node.appendChild(document.createTextNode(c));
+    else node.appendChild(c);
+  });
+  return node;
+}
+
+function header(title, rightText, backFn) {
+  return el("div", { class: "header" }, [
+    backFn ? el("button", { class: "back-btn", onclick: backFn }, "← Atrás") : el("span"),
+    el("span", { class: "logo" }, title),
+    el("span", { style: "font-size:13px;color:rgba(240,232,254,0.5)" }, rightText || ""),
+  ]);
+}
+
+function coloredHanziEl(hanzi, tone, size) {
+  const tones = tone.split("-");
+  const wrap = el("div", { class: "word-hanzi", style: `font-size:${size}px`, onclick: (e) => { e.stopPropagation(); openStrokeModal(hanzi); } });
+  hanzi.split("").forEach((ch, i) => {
+    wrap.appendChild(el("span", { style: `color:${getToneColor(tones[i] || tones[0])}` }, ch));
+  });
+  return wrap;
+}
+
+function renderVoiceControls() {
+  const selectVoz = el("select", {
+    class: "voice-select",
+    onchange: (e) => {
+      selectedVoiceType = e.target.value;
+      localStorage.setItem("hanzi-voice-type", selectedVoiceType);
+    }
+  }, [
+    el("option", { value: "youdao", selected: selectedVoiceType === "youdao" ? "selected" : null }, "👩‍💼 Voz Estándar"),
+    el("option", { value: "fluida", selected: selectedVoiceType === "fluida" ? "selected" : null }, "👩 Voz Fluida"),
+    el("option", { value: "energica", selected: selectedVoiceType === "energica" ? "selected" : null }, "👨 Voz Enérgica"),
+    el("option", { value: "locutor", selected: selectedVoiceType === "locutor" ? "selected" : null }, "👨‍💼 Voz Locutor")
+  ]);
+
+  const speedValLabel = el("span", { class: "speed-val" }, selectedVoiceSpeed.toFixed(2) + "x");
+  const sliderSpeed = el("input", {
+    type: "range", min: "0.5", max: "2.0", step: "0.05", class: "speed-slider",
+    value: selectedVoiceSpeed.toString(),
+    oninput: (e) => {
+      selectedVoiceSpeed = parseFloat(e.target.value);
+      speedValLabel.textContent = selectedVoiceSpeed.toFixed(2) + "x";
+      localStorage.setItem("hanzi-voice-speed", selectedVoiceSpeed.toString());
+    }
+  });
+
+  return el("div", { class: "voice-controls-panel" }, [
+    el("div", { class: "voice-control-row" }, [
+      el("span", { class: "voice-label" }, "Tipo de voz:"),
+      selectVoz
+    ]),
+    el("div", { class: "voice-control-row" }, [
+      el("span", { class: "voice-label" }, "Velocidad:"),
+      el("div", { class: "speed-container" }, [sliderSpeed, speedValLabel])
+    ])
+  ]);
+}
+
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  if (state.screen === "loading") {
+    app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
+      el("div", { style: "color:rgba(240,232,254,0.5);font-size:14px" }, "Cargando vocabulario…")
+    ));
+    return;
+  }
+
+  if (state.screen === "error") {
+    app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
+      el("div", { style: "color:rgba(240,232,254,0.6);font-size:14px;text-align:center" },
+        "No se pudo cargar ningún fichero de vocabulario. Revisa que existan en /data/ y que los nombres coincidan exactamente.")
+    ));
+    return;
+  }
+
+  if (state.screen === "course-select") {
+    const main = el("div", { class: "main center-col" });
+    main.appendChild(el("div", { class: "hero-emoji" }, "选择"));
+    main.appendChild(el("div", { class: "hero-label" }, "¿Qué curso quieres repasar?"));
+    main.appendChild(el("div", { class: "hero-sub" }, "Puedes elegir uno o varios"));
+
+    const list = el("div", { style: "width:100%" });
+    state.availableCourses.forEach(c => {
+      const active = state.selectedCourses.includes(c.id);
+      const btn = el("button", {
+        class: "course-btn" + (active ? " active" : ""),
+        onclick: () => {
+          state.selectedCourses = active
+            ? state.selectedCourses.filter(x => x !== c.id)
+            : [...state.selectedCourses, c.id];
+          render();
+        }
+      }, [
+        el("div", { style: "display:flex;align-items:center" }, [
+          el("div", { class: "checkbox" + (active ? " active" : "") }, active ? "✓" : ""),
+          el("div", { style: "font-size:17px;font-weight:700" }, c.label),
+        ]),
+        el("div", { style: "font-size:12px;color:rgba(240,232,254,0.45)" }, c.words.length + " palabras"),
       ]);
+      list.appendChild(btn);
+    });
+    main.appendChild(list);
 
-      // Zona de revelado condicional (Pinyin + Significado)
-      const infoBox = el("div", { class: "info-reveal-box" });
-      if (state.isRevealed) {
-        infoBox.appendChild(el("div", { class: "pinyin-text" }, currentWord.pinyin));
-        infoBox.appendChild(el("div", { class: "meaning-text" }, currentWord.meaning));
-      } else {
-        infoBox.appendChild(el("button", { class: "reveal-placeholder-btn", onclick: handleReveal }, "Mostrar respuesta y trazos"));
+    main.appendChild(renderVoiceControls());
+    
+    // Crédito añadido de forma dinámica en la parte inferior de la pantalla inicial
+    main.appendChild(el("div", { class: "credit-text" }, "por obra de José Mª Martínez Blanes"));
+
+    const totalSel = state.allWords.filter(w => state.selectedCourses.includes(w._course)).length;
+    main.appendChild(el("button", {
+      class: "primary-btn",
+      disabled: state.selectedCourses.length === 0 ? "disabled" : null,
+      onclick: () => {
+        if (state.selectedCourses.length === 0) return;
+        state.words = getFilteredWords();
+        state.shuffled = [...state.words].sort(() => Math.random() - 0.5);
+        state.weights = {};
+        state.words.forEach((w, i) => { state.weights[i] = state.persistedWeights[wordKey(w)] || 1; });
+        state.cardIndex = 0;
+        state.screen = "menu";
+        render();
       }
+    }, state.selectedCourses.length === 0 ? "Elige al menos un curso" : `Continuar (${totalSel} palabras)`));
 
-      // Zona de botones interactivos
-      const actionZone = el("div", { class: "action-zone" });
-      if (state.isRevealed) {
-        actionZone.appendChild(el("div", { class: "btn-row" }, [
-          el("button", { class: "btn btn-danger", onclick: () => handleAnswer(false) }, "❌ La fallé"),
-          el("button", { class: "btn btn-success", onclick: () => handleAnswer(true) }, "✅ Acertada")
-        ]));
-      }
-      actionZone.appendChild(el("button", { class: "btn btn-secondary", onclick: () => speak(currentWord.hanzi) }, "🔊 Escuchar Pronunciación"));
+    app.appendChild(header("Hanzis", state.allWords.length + " palabras totales"));
+    app.appendChild(main);
+    return;
+  }
 
-      const card = el("div", { class: "flashcard" }, [
-        el("div", { class: "meta-tag" }, `Tema ${currentWord.tema || 'N/A'}`),
-        el("div", { id: "writer-target", onclick: () => { if(writerInstance) writerInstance.animateCharacter(); } }),
-        infoBox
-      ]);
+  if (state.screen === "menu") {
+    const main = el("div", { class: "main center-col" });
+    main.appendChild(el("div", { style: "font-size:14px;color:#c084fc;letter-spacing:1px;text-align:center" },
+      state.selectedCourses.map(id => state.availableCourses.find(c => c.id === id)?.label).join(" · ")));
+    main.appendChild(el("div", { class: "hero-emoji" }, "中文"));
+    main.appendChild(el("div", { class: "hero-label" }, "Repaso de vocabulario"));
 
-      main.appendChild(stats);
-      main.appendChild(card);
-      main.appendChild(actionZone);
+    const items = [
+      { id: "flashcard", icon: "🎴", title: "Tarjetas Flash", desc: "Escucha y aprende con tarjetas" },
+      { id: "quiz", icon: "🎯", title: "Quiz con Refuerzo", desc: "Tus fallos se recuerdan entre sesiones" },
+      { id: "browse", icon: "📖", title: "Vocabulario completo", desc: "Explora y escucha todas las palabras" },
+    ];
+    items.forEach(item => {
+      main.appendChild(el("button", {
+        class: "menu-btn",
+        onclick: () => { state.screen = item.id; if (item.id === "quiz") startQuiz(); else render(); }
+      }, [
+        el("span", { class: "menu-icon" }, item.icon),
+        el("div", {}, [
+          el("div", { class: "menu-title" }, item.title),
+          el("div", { class: "menu-desc" }, item.desc),
+        ]),
+      ]));
+    });
+
+    const reinforced = Object.values(state.weights).filter(w => w > 1).length;
+    if (reinforced > 0) {
+      main.appendChild(el("div", { class: "warning-text" }, `⚠ ${reinforced} palabra(s) con refuerzo pendiente (guardado)`));
     }
 
-  } else if (state.view === "BROWSE") {
-    // --- VISTA DE EXPLORACIÓN / DICCIONARIO ---
-    const search = el("input", { 
-      class: "search-box", 
-      placeholder: "Buscar por hanzi, pinyin o significado...", 
+    main.appendChild(el("button", {
+      class: "footer-link",
+      onclick: () => {
+        state.persistedWeights = {};
+        saveWeights({});
+        state.words.forEach((_, i) => { state.weights[i] = 1; });
+        render();
+      }
+    }, "Borrar progreso guardado"));
+
+    app.appendChild(header("Hanzis", state.words.length + " palabras", () => { state.screen = "course-select"; render(); }));
+    app.appendChild(main);
+    return;
+  }
+
+  if (state.screen === "flashcard") {
+    const word = state.shuffled[state.cardIndex];
+    const main = el("div", { class: "main" });
+    if (!word) { main.appendChild(el("div", { class: "empty-state" }, "No hay palabras.")); app.appendChild(main); return; }
+
+    const card = el("div", { class: "flashcard" + (state.flipped ? " flipped" : ""), onclick: () => { state.flipped = !state.flipped; render(); } });
+    card.appendChild(coloredHanziEl(word.hanzi, word.tone, 56));
+    if (state.showPinyin || state.flipped) card.appendChild(el("div", { class: "pinyin-text" }, word.pinyin));
+    if (state.flipped) {
+      card.appendChild(el("div", { class: "meaning-text" }, word.meaning));
+    } else {
+      card.appendChild(el("div", { class: "hint-text" }, "Toca para ver el significado o el Hanzi para ver los trazos"));
+    }
+
+    const controls = el("div", { class: "row-controls" }, [
+      el("button", { class: "ctrl-btn", onclick: () => { state.cardIndex = (state.cardIndex - 1 + state.shuffled.length) % state.shuffled.length; state.flipped = false; render(); } }, "←"),
+      el("button", { class: "speak-btn", onclick: () => speak(word.hanzi) }, "🔊 Escuchar"),
+      el("button", { class: "ctrl-btn", onclick: () => { state.cardIndex = (state.cardIndex + 1) % state.shuffled.length; state.flipped = false; render(); } }, "→"),
+    ]);
+
+    const pinyinToggle = el("div", { style: "display:flex;justify-content:center" },
+      el("button", { class: "toggle-btn" + (state.showPinyin ? " active" : ""), onclick: () => { state.showPinyin = !state.showPinyin; render(); } },
+        state.showPinyin ? "🔤 Ocultar Pinyin" : "🔤 Mostrar Pinyin")
+    );
+
+    main.appendChild(card);
+    main.appendChild(controls);
+    main.appendChild(pinyinToggle);
+
+    app.appendChild(header("Tarjetas Flash", (state.cardIndex + 1) + "/" + state.shuffled.length, () => { state.screen = "menu"; render(); }));
+    app.appendChild(main);
+    return;
+  }
+
+  if (state.screen === "quiz") {
+    const main = el("div", { class: "main" });
+    const words = state.words;
+
+    if (state.quiz.done) {
+      const pct = state.quiz.total ? state.quiz.score / state.quiz.total : 0;
+      const emoji = pct >= 0.8 ? "🏆" : pct >= 0.5 ? "👍" : "💪";
+      const reinforced = Object.values(state.weights).filter(w => w > 1).length;
+      main.appendChild(el("div", { class: "center-col", style: "padding-top:48px" }, [
+        el("div", { style: "font-size:64px" }, emoji),
+        el("div", { style: "font-size:46px;font-weight:700;color:#c084fc" }, [
+          state.quiz.score.toString(),
+          el("span", { style: "font-size:22px;color:rgba(240,232,254,0.4)" }, "/" + state.quiz.total),
+        ]),
+        reinforced > 0 ? el("div", { style: "background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);border-radius:12px;padding:10px 20px;font-size:13px;color:#c084fc" },
+          `${reinforced} palabra(s) con refuerzo guardado · seguirán apareciendo más, incluso si cierras la app`) : null,
+        el("button", { class: "primary-btn", style: "max-width:300px", onclick: startQuiz }, "Otro intento"),
+        el("button", { class: "footer-link", onclick: () => { state.screen = "menu"; render(); } }, "Menú"),
+      ]));
+      app.appendChild(header("Resultado", "", null));
+      app.appendChild(main);
+      return;
+    }
+
+    const wordIdx = state.quiz.queue[state.quiz.pos];
+    const current = words[wordIdx];
+    const isAnswered = state.quiz.selected !== null;
+    const wasCorrect = isAnswered && state.quiz.options[state.quiz.selected].hanzi === current.hanzi;
+    const quizLen = Math.min(20, words.length);
+
+    main.appendChild(el("div", { class: "progress-text" }, `Pregunta ${state.quiz.total + 1} de ${quizLen}`));
+    main.appendChild(el("div", { class: "progress-bar-bg" },
+      el("div", { class: "progress-bar-fill", style: `width:${(state.quiz.total / quizLen) * 100}%` })));
+
+    const card = el("div", { class: "quiz-card" + (isAnswered ? (wasCorrect ? " correct" : " wrong") : "") });
+    if (!isAnswered) {
+      card.appendChild(el("div", { style: "font-size:11px;color:rgba(240,232,254,0.4);margin-bottom:16px;letter-spacing:1px" }, "Escucha y elige el significado"));
+      card.appendChild(el("button", { class: "big-play-btn", onclick: () => speak(current.hanzi) }, "🔊"));
+    } else {
+      card.appendChild(el("div", { style: "font-size:11px;color:rgba(240,232,254,0.4);letter-spacing:1px" }, wasCorrect ? "✓ Correcto" : "✗ Incorrecto"));
+      card.appendChild(coloredHanziEl(current.hanzi, current.tone, 50));
+      card.appendChild(el("div", { style: "font-size:16px;color:#c084fc" }, current.pinyin));
+      card.appendChild(el("div", { style: "font-size:13px;color:rgba(240,232,254,0.8);line-height:1.4;max-width:480px" }, current.meaning));
+      card.appendChild(el("button", { style: "margin-top:4px;background:rgba(147,51,234,0.3);border:1px solid rgba(192,132,252,0.4);color:#c084fc;border-radius:8px;padding:5px 14px;cursor:pointer;font-size:12px", onclick: () => speak(current.hanzi) }, "🔊 Escuchar de nuevo"));
+    }
+    main.appendChild(card);
+
+    if (isAnswered || true) {
+      const grid = el("div", { class: "opt-grid" });
+      state.quiz.options.forEach((opt, i) => {
+        let cls = "opt-btn";
+        if (isAnswered) {
+          if (opt.hanzi === current.hanzi) cls += " correct";
+          else if (i === state.quiz.selected) cls += " wrong";
+        }
+        grid.appendChild(el("button", { class: cls, onclick: () => answerQuiz(i) }, opt.meaning));
+      });
+      main.appendChild(grid);
+    }
+
+    app.appendChild(header("Quiz", "✓ " + state.quiz.score, () => { state.screen = "menu"; render(); }));
+    app.appendChild(main);
+    return;
+  }
+
+  if (state.screen === "browse") {
+    const main = el("div", { class: "main" });
+    main.appendChild(el("input", {
+      class: "search-input", type: "text", placeholder: "Buscar por hanzi, pinyin o significado...",
       value: state.browseSearch,
       oninput: (e) => { state.browseSearch = e.target.value; render(); }
-    });
+    }));
 
     const q = state.browseSearch.toLowerCase();
     const filtered = state.words.filter(w =>
@@ -703,16 +896,17 @@ function render() {
       w.meaning.toLowerCase().includes(q)
     );
 
-    const list = el("div", { class: "words-list" });
+    const list = el("div");
     filtered.forEach(word => {
       const idx = state.words.indexOf(word);
       const wgt = state.weights[idx] || 1;
+      const realLevelText = COURSE_LEVEL_LABELS[word._course] || word._course;
 
       const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
         el("div", { class: "word-left-block" }, [
           el("div", { class: "word-top-meta" }, [
-            el("div", { class: "word-course-tag" }, `T${word.tema}`),
-            coloredHanziEl(word.hanzi, null, 24),
+            el("div", { class: "word-course-tag" }, realLevelText),
+            coloredHanziEl(word.hanzi, word.tone, 32),
             el("div", { class: "word-pinyin" }, word.pinyin)
           ]),
           el("div", { class: "word-meaning" }, word.meaning)
@@ -724,16 +918,16 @@ function render() {
       ]);
       list.appendChild(row);
     });
-
-    main.appendChild(search);
+    if (filtered.length === 0) list.appendChild(el("div", { class: "empty-state" }, "Sin resultados."));
     main.appendChild(list);
-  }
 
-  root.appendChild(main);
+    app.appendChild(header("Vocabulario", filtered.length.toString(), () => { state.screen = "menu"; render(); }));
+    app.appendChild(main);
+    return;
+  }
 }
 
-// Inicializar la app al cargar la ventana
-window.onload = initApp;
+init();
 </script>
 </body>
 </html>
