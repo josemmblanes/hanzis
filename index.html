@@ -365,6 +365,7 @@ function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
 let currentExternalAudio = null;
 let selectedVoiceType = localStorage.getItem("hanzi-voice-type") || "youdao";
 let selectedVoiceSpeed = parseFloat(localStorage.getItem("hanzi-voice-speed") || "1.0");
+const VOICE_SAMPLE_WORD = "您好";
 
 function speak(text) {
   if (!text) return;
@@ -657,6 +658,7 @@ function renderVoiceControls() {
     onchange: (e) => {
       selectedVoiceType = e.target.value;
       localStorage.setItem("hanzi-voice-type", selectedVoiceType);
+      speak(VOICE_SAMPLE_WORD);
     }
   }, [
     el("option", { value: "youdao", selected: selectedVoiceType === "youdao" ? "selected" : null }, "👩‍💼 Voz Estándar"),
@@ -673,7 +675,8 @@ function renderVoiceControls() {
       selectedVoiceSpeed = parseFloat(e.target.value);
       speedValLabel.textContent = selectedVoiceSpeed.toFixed(2) + "x";
       localStorage.setItem("hanzi-voice-speed", selectedVoiceSpeed.toString());
-    }
+    },
+    onchange: () => speak(VOICE_SAMPLE_WORD)
   });
 
   return el("div", { class: "voice-controls-panel" }, [
@@ -877,6 +880,7 @@ function render() {
     main.appendChild(card);
     main.appendChild(controls);
     main.appendChild(pinyinToggle);
+    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Tarjetas Flash", (state.cardIndex + 1) + "/" + state.shuffled.length, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
@@ -902,6 +906,7 @@ function render() {
         el("button", { class: "primary-btn", style: "max-width:300px", onclick: startQuiz }, "Otro intento"),
         el("button", { class: "footer-link", onclick: () => { state.screen = "menu"; render(); } }, "Menú"),
       ]));
+      main.appendChild(renderVoiceControls());
       app.appendChild(header("Resultado", "", null));
       app.appendChild(main);
       return;
@@ -942,6 +947,8 @@ function render() {
       });
       main.appendChild(grid);
     }
+
+    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Quiz", "✓ " + state.quiz.score, () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
@@ -987,6 +994,7 @@ function render() {
     });
     if (filtered.length === 0) list.appendChild(el("div", { class: "empty-state" }, "Sin resultados."));
     main.appendChild(list);
+    main.appendChild(renderVoiceControls());
 
     app.appendChild(header("Vocabulario", filtered.length.toString(), () => { state.screen = "menu"; render(); }));
     app.appendChild(main);
