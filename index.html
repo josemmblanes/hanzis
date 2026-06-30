@@ -27,907 +27,546 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-sizing: border-box;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 50;
   }
-  .logo { font-size: 20px; font-weight: 700; color: #c084fc; letter-spacing: 2px; text-shadow: 0 0 20px rgba(192,132,252,0.5); }
+  .header h1 { font-size: 20px; font-weight: 700; color: #fff; text-shadow: 0 2px 10px rgba(168,85,247,0.4); }
+  
   .back-btn {
-    background: rgba(192,132,252,0.15);
-    border: 1px solid rgba(192,132,252,0.4);
-    color: #c084fc;
-    border-radius: 8px;
-    padding: 6px 14px;
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #e9d5ff;
+    padding: 6px 12px;
+    border-radius: 20px;
     cursor: pointer;
     font-size: 13px;
+    transition: all 0.2s ease;
   }
-  .main { flex: 1; width: 100%; padding: 20px 16px 48px; box-sizing: border-box; }
-
-  /* Selección de cursos */
-  .course-btn {
-    width: 100%; max-width: 380px;
-    background: rgba(255,255,255,0.04);
-    border: 2px solid rgba(255,255,255,0.12);
-    border-radius: 16px;
-    padding: 18px 22px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between;
-    color: #f0e8fe;
-    transition: all 0.2s;
-    margin: 0 auto 12px auto;
+  .back-btn:hover {
+    background: rgba(168, 85, 247, 0.4);
+    color: #fff;
   }
-  .course-btn.active { background: rgba(192,132,252,0.15); border-color: #c084fc; }
-  .checkbox {
-    width: 24px; height: 24px; border-radius: 6px;
-    border: 2px solid rgba(255,255,255,0.3);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; color: #190a35; font-weight: 900;
-    margin-right: 14px;
-  }
-  .checkbox.active { background: #c084fc; border-color: #c084fc; }
 
-  .menu-btn {
-    width: 100%; max-width: 380px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(192,132,252,0.25);
-    border-radius: 16px;
-    padding: 18px 22px;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 16px;
-    text-align: left; color: #f0e8fe;
-    margin: 0 auto 12px auto;
-  }
-  .menu-btn:hover { background: rgba(192,132,252,0.1); border-color: rgba(192,132,252,0.6); }
-  .menu-icon { font-size: 32px; }
-  .menu-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
-  .menu-desc { font-size: 12px; color: rgba(240,232,254,0.45); }
+  .main-content { padding: 20px; flex: 1; display: flex; flex-direction: column; width: 100%; }
 
-  .primary-btn {
-    background: linear-gradient(135deg,#c084fc,#9333ea);
-    border: none; color: #190a35;
-    border-radius: 14px; padding: 16px 40px;
-    font-weight: 800; font-size: 16px;
-    cursor: pointer; width: 100%; max-width: 380px;
-    display: block; margin: 12px auto 0 auto;
-  }
-  .primary-btn:disabled { background: rgba(255,255,255,0.05); color: rgba(240,232,254,0.3); cursor: not-allowed; }
-
-  .center-col { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-  .hero-emoji { font-size: 56px; margin-bottom: 6px; text-align: center; }
-  .hero-label { font-size: 20px; font-weight: 300; color: rgba(240,232,254,0.8); letter-spacing: 1px; text-align: center; }
-  .hero-sub { font-size: 12px; color: rgba(240,232,254,0.4); margin-top: 4px; text-align: center; }
-
-  /* Flashcard */
-  .flashcard {
-    background: linear-gradient(135deg,rgba(192,132,252,0.1),rgba(255,255,255,0.03));
-    border: 1px solid rgba(192,132,252,0.35);
-    border-radius: 24px;
-    padding: 32px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    min-height: 230px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
-    margin-bottom: 20px;
+  /* Grid de selección */
+  .grid-menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
     width: 100%;
+    margin-bottom: 24px;
   }
-  .flashcard.flipped { background: linear-gradient(135deg,rgba(39,174,96,0.18),rgba(39,174,96,0.04)); border-color: rgba(39,174,96,0.5); }
-  .hanzi-big { font-size: 56px; line-height: 1; }
-  .pinyin-text { font-size: 18px; color: #c084fc; letter-spacing: 2px; }
-  .meaning-text { font-size: 14px; color: rgba(240,232,254,0.9); text-align: center; max-width: 100%; line-height: 1.5; padding: 0 8px; }
-  .hint-text { font-size: 11px; color: rgba(240,232,254,0.3); text-align: center; }
-
-  .row-controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; width: 100%; }
-  .ctrl-btn {
-    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
-    color: #f0e8fe; border-radius: 12px; padding: 12px 20px; cursor: pointer; font-size: 18px;
+  .grid-menu .full-width {
+    grid-column: span 2;
   }
-  .speak-btn {
-    background: linear-gradient(135deg,#9333ea,#7c3aed); border: none; color: white;
-    border-radius: 12px; padding: 12px 24px; cursor: pointer; font-size: 15px; font-weight: 700; flex: 1; max-width: 240px;
-  }
-  .toggle-btn {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-    color: #f0e8fe; border-radius: 10px; padding: 8px 16px; cursor: pointer; font-size: 13px;
-  }
-  .toggle-btn.active { background: rgba(192,132,252,0.15); border-color: rgba(192,132,252,0.5); }
-
-  /* Controles de Voz inferiores */
-  .voice-controls-panel {
-    background: rgba(255, 255, 255, 0.03);
+  .menu-card {
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(192, 132, 252, 0.15);
     border-radius: 16px;
-    padding: 16px;
-    margin-top: 10px;
-    width: 100%;
-    max-width: 380px;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
   }
-  .voice-control-row {
+  .menu-card:hover {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.4);
+    transform: translateY(-2px);
+  }
+  .menu-card.selected {
+    background: rgba(168, 85, 247, 0.25);
+    border-color: #c084fc;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  }
+  .menu-card h2 { font-size: 22px; color: #fff; margin-bottom: 4px; }
+  .menu-card p { font-size: 13px; color: #a78bfa; }
+
+  /* Vista de estudio */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+  }
+  .stat-val { font-size: 16px; font-weight: 700; color: #fff; }
+  .stat-lbl { font-size: 11px; color: #a78bfa; margin-top: 2px; }
+
+  .flashcard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(192, 132, 252, 0.2);
+    border-radius: 24px;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    margin-bottom: auto;
+  }
+  
+  #writer-target {
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 30px;
+    cursor: pointer;
+  }
+
+  .info-reveal-box { width: 100%; text-align: center; min-height: 100px; }
+  .pinyin-text { font-size: 26px; font-weight: 600; color: #38bdf8; margin-bottom: 8px; }
+  .meaning-text { font-size: 18px; color: #e2e8f0; line-height: 1.4; padding: 0 10px; }
+  
+  .reveal-placeholder-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px dashed rgba(192, 132, 252, 0.4);
+    color: #c084fc;
+    padding: 20px;
+    border-radius: 16px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s;
+  }
+  .reveal-placeholder-btn:hover {
+    background: rgba(168, 85, 247, 0.1);
+    border-style: solid;
+  }
+
+  .action-zone { width: 100%; margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .btn-row { display: flex; gap: 12px; width: 100%; }
+  
+  .btn {
+    flex: 1;
+    border: none;
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary { background: #a855f7; color: #fff; box-shadow: 0 4px 14px rgba(168,85,247,0.4); }
+  .btn-primary:hover { background: #9333ea; transform: translateY(-1px); }
+  .btn-primary:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); box-shadow: none; cursor: not-allowed; }
+  
+  .btn-secondary { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.15); }
+  
+  .btn-success { background: #16a34a; color: #fff; box-shadow: 0 4px 14px rgba(22,163,74,0.4); }
+  .btn-success:hover { background: #15803d; transform: translateY(-1px); }
+  
+  .btn-danger { background: #dc2626; color: #fff; box-shadow: 0 4px 14px rgba(220,38,38,0.4); }
+  .btn-danger:hover { background: #b91c1c; transform: translateY(-1px); }
+
+  /* Vista lista */
+  .search-box {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(192, 132, 252, 0.2);
+    padding: 14px 16px;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 16px;
+    outline: none;
+  }
+  .search-box:focus { border-color: #a855f7; box-shadow: 0 0 0 2px rgba(168,85,247,0.2); }
+  
+  .words-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+    padding-right: 4px;
+  }
+  .word-row {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
-    gap: 10px;
   }
-  .voice-control-row:last-child { margin-bottom: 0; }
-  .voice-label { font-size: 12px; color: rgba(240, 232, 254, 0.5); }
-  .voice-select {
-    background: #251343;
-    border: 1px solid rgba(192, 132, 252, 0.3);
-    color: #f0e8fe;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    outline: none;
-    cursor: pointer;
-    flex: 1;
-    max-width: 240px;
+  .word-row.reinforced {
+    border-color: rgba(234,179,8,0.3);
+    background: linear-gradient(90deg, rgba(234,179,8,0.03), transparent);
   }
-  .speed-container { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 240px; }
-  .speed-slider {
-    flex: 1;
-    accent-color: #c084fc;
-    cursor: pointer;
+  .word-left-block { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .word-top-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .word-course-tag {
+    font-size: 12px;
+    background: rgba(255,255,255,0.1);
+    padding: 3px 8px;
+    border-radius: 8px;
+    color: #cbd5e1;
   }
-  .speed-val { font-size: 12px; color: #c084fc; font-weight: bold; min-width: 40px; text-align: right; }
-
-  /* Quiz */
-  .progress-text { font-size: 11px; color: rgba(240,232,254,0.4); margin-bottom: 5px; text-align: center; }
-  .progress-bar-bg { background: rgba(255,255,255,0.07); border-radius: 8px; height: 5px; margin-bottom: 16px; }
-  .progress-bar-fill { background: linear-gradient(90deg,#c084fc,#9333ea); border-radius: 8px; height: 5px; transition: width 0.4s; }
-
-  .quiz-card {
-    background: rgba(192,132,252,0.06);
-    border: 1px solid rgba(192,132,252,0.25);
-    border-radius: 20px;
-    padding: 24px 20px;
-    text-align: center;
-    margin-bottom: 20px;
-    transition: border-color 0.3s;
-  }
-  .quiz-card.correct { border-color: rgba(39,174,96,0.6); }
-  .quiz-card.wrong { border-color: rgba(231,76,60,0.5); }
-
-  .big-play-btn {
-    background: linear-gradient(135deg,#9333ea,#7c3aed); border: none; color: white;
-    border-radius: 50%; width: 76px; height: 76px; cursor: pointer; font-size: 26px;
-    display: flex; align-items: center; justify-content: center; margin: 0 auto;
-    box-shadow: 0 0 28px rgba(147,51,234,0.5);
-  }
-
-  .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .opt-btn {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: #f0e8fe;
-    border-radius: 14px; padding: 14px 10px; cursor: pointer; font-size: 13px; text-align: center;
-    transition: all 0.3s; font-weight: 500; line-height: 1.4; min-height: 64px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .opt-btn.correct { background: rgba(39,174,96,0.2); border-color: #27ae60; color: #5dfc8a; }
-  .opt-btn.wrong { background: rgba(231,76,60,0.15); border-color: #e74c3c; color: #ff8080; }
-
-  /* Filas de Vocabulario para iPhone/Móviles */
-  .search-input {
-    width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(192,132,252,0.3);
-    border-radius: 12px; padding: 12px 16px; color: #f0e8fe; font-size: 14px;
-    box-sizing: border-box; margin-bottom: 16px; outline: none;
-  }
-  .search-input::placeholder { color: rgba(240,232,254,0.4); }
-
-  .word-row {
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 16px; padding: 16px; 
-    display: flex; flex-direction: row; align-items: center; justify-content: space-between; 
-    gap: 12px; margin-bottom: 12px; width: 100%;
-  }
-  .word-row.reinforced { border-color: rgba(192,132,252,0.4); }
+  .word-pinyin { font-size: 15px; color: #38bdf8; font-weight: 500; }
+  .word-meaning { font-size: 14px; color: #94a3b8; line-height: 1.4; }
   
-  .word-left-block { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
-  .word-top-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
-  .word-course-tag { font-size: 14px; color: #b08bf8; font-weight: 700; white-space: nowrap; }
-  
-  /* Ajuste para que el contenedor Hanzi sea clicable con buen tamaño */
-  .word-hanzi { font-size: 32px; display: inline-flex; align-items: center; justify-content: center; font-weight: 500; line-height: 1.1; cursor: pointer; }
-  .word-pinyin { color: #c084fc; font-size: 15px; font-weight: 600; white-space: nowrap; }
-  .word-meaning { font-size: 14px; color: rgba(240,232,254,0.7); line-height: 1.4; word-break: break-word; }
-  
-  .word-right-block { display: flex; flex-direction: column; align-items: center; gap: 8px; justify-content: center; shrink: 0; }
-  .weight-badge { font-size: 10px; color: #c084fc; background: rgba(192,132,252,0.15); border-radius: 4px; padding: 2px 6px; font-weight: 700; }
   .play-icon-btn {
-    background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; color: white;
-    border-radius: 12px; width: 44px; height: 44px; cursor: pointer; font-size: 18px;
-    display: flex; align-items: center; justify-content: center; transition: transform 0.1s; shrink: 0;
+    background: rgba(255,255,255,0.05);
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: background 0.2s;
   }
-  .play-icon-btn:active { transform: scale(0.95); }
+  .play-icon-btn:hover { background: rgba(255,255,255,0.15); }
+  .weight-badge {
+    font-size: 12px;
+    background: rgba(234,179,8,0.2);
+    color: #fde047;
+    border: 1px solid rgba(234,179,8,0.4);
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-right: 12px;
+  }
+  .word-right-block { display: flex; align-items: center; }
 
-  /* NUEVO: Modal estilizado de trazos (Hanzi Writer) */
-  .writer-modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(15, 7, 30, 0.85); backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center; z-index: 100;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 16px;
-  }
-  .writer-modal-overlay.open { opacity: 1; pointer-events: auto; }
-  .writer-modal {
-    background: #22123b; border: 1px solid rgba(192,132,252,0.4);
-    border-radius: 24px; width: 100%; max-width: 340px; padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; gap: 16px;
-  }
-  .writer-modal-header { width: 100%; display: flex; justify-content: space-between; align-items: center; }
-  .writer-modal-title { font-size: 16px; font-weight: 700; color: #c084fc; }
-  .writer-close-btn { background: transparent; border: none; color: rgba(240,232,254,0.5); font-size: 22px; cursor: pointer; }
-  
-  /* Selector de pestañas para palabras compuestas (varios caracteres) */
-  .writer-tabs { display: flex; gap: 6px; width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: center; }
-  .writer-tab {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-    color: #f0e8fe; border-radius: 8px; padding: 6px 12px; font-size: 16px; cursor: pointer;
-  }
-  .writer-tab.active { background: rgba(192,132,252,0.25); border-color: #c084fc; color: white; font-weight: 700; }
-
-  /* Lienzo del SVG */
-  .writer-canvas-holder {
-    background: #190a35; border: 1px solid rgba(192,132,252,0.2); border-radius: 16px;
-    width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;
-  }
-  .writer-controls { display: flex; gap: 10px; width: 100%; }
-  .writer-btn {
-    flex: 1; padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 700; text-align: center;
-  }
-  .writer-btn-anim { background: #9333ea; color: white; }
-  .writer-btn-quiz { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #f0e8fe; }
-
-  .empty-state { text-align: center; color: rgba(240,232,254,0.4); padding: 40px 20px; font-size: 14px; }
-  .footer-link {
-    background: transparent; border: 1px solid rgba(255,255,255,0.1); color: rgba(240,232,254,0.3);
-    border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 11px; display: block; margin: 16px auto 0 auto;
-  }
-  .warning-text { font-size: 12px; color: rgba(192,132,252,0.7); margin-top: 4px; text-align: center; }
-  .credit-text { font-size: 11px; color: rgba(240,232,254,0.35); text-align: center; margin-top: 14px; font-style: italic; }
+  /* Colores de tonos */
+  .tone1 { color: #ff4d4d !important; }
+  .tone2 { color: #22c55e !important; }
+  .tone3 { color: #eab308 !important; }
+  .tone4 { color: #3b82f6 !important; }
+  .tone5 { color: #94a3b8 !important; }
 </style>
 </head>
 <body>
 
 <div id="app"></div>
 
-<div id="writer-overlay" class="writer-modal-overlay" onclick="closeStrokeModal(event)">
-  <div class="writer-modal" onclick="event.stopPropagation()">
-    <div class="writer-modal-header">
-      <span class="writer-modal-title">Orden de trazos</span>
-      <button class="writer-close-btn" onclick="closeStrokeModal(null)">✕</button>
-    </div>
-    <div id="writer-tabs-container" class="writer-tabs"></div>
-    <div class="writer-canvas-holder">
-      <div id="writer-target"></div>
-    </div>
-    <div class="writer-controls">
-      <button class="writer-btn writer-btn-anim" onclick="triggerStrokeAnim()">🎬 Animar</button>
-      <button class="writer-btn writer-btn-quiz" onclick="triggerStrokeQuiz()">✍ Practice</button>
-    </div>
-  </div>
-</div>
-
 <script>
-const COURSE_FILES = [
-  { id: "HSK1",   file: "data/HSK1.json",   label: "Curso 1" },
-  { id: "HSK2",   file: "data/HSK2.json",   label: "Curso 2" },
-  { id: "HSK3_1", file: "data/HSK3_1.json", label: "Curso 3 上" },
-  { id: "HSK3_2", file: "data/HSK3_2.json", label: "Curso 3 下" },
-  { id: "HSK4_1", file: "data/HSK4_1.json", label: "Curso 4 上" },
-  { id: "HSK4_2", file: "data/HSK4_2.json", label: "Curso 4 中" },
-  { id: "HSK4_3", file: "data/HSK4_3.json", label: "Curso 4 下" }
+// --- BASE DE DATOS COMPLETA ---
+const DATA_DICTIONARY = [
+  { "hanzi": "经验", "pinyin": "jīng yàn", "meaning": "experiencia en alguna tarea", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "诚实", "pinyin": "chéng shí", "meaning": "honesto, sincero, honestidad, sinceridad, confiable", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "平时", "pinyin": "píng shí", "meaning": "normalmente, habitualmente, en circunstancias normales, en el día a día", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "验", "pinyin": "yàn", "meaning": "probar, comprobar, verificar, examinar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "积累", "pinyin": "jī lěi", "meaning": "acumular, acumulación (cosas intangibles como experiencia...)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "积", "pinyin": "jī", "meaning": "acumular, amontonar, reunir poco a poco", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "优点", "pinyin": "yóu diǎn", "meaning": "ventaja, punto fuerte, virtud", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "优", "pinyin": "yóu", "meaning": "excelente, superior, sobresaliente", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "诚", "pinyin": "chéng", "meaning": "sinceridad, honestidad", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "硕", "pinyin": "shuò", "meaning": "grande, enorme, destacado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "厉害", "pinyin": "lì hài", "meaning": "tremendo, increíble, alucinante, impresionante", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "教育学", "pinyin": "jiào yù xué", "meaning": "pedagogía, ciencias de la educación", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "厉", "pinyin": "lì", "meaning": "estricto, fuerte, violento", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "教育", "pinyin": "jiào yù", "meaning": "educar, educación", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "硕士", "pinyin": "shuò shì", "meaning": "máster, título de postgrado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "任务", "pinyin": "rèn wu", "meaning": "tarea, encargo, misión", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "任", "pinyin": "rèn", "meaning": "cargo, responsibility, nombrar, permitir, cualquiera; apellido Ren", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "持", "pinyin": "chí", "meaning": "sostener, mantener, continuar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "务", "pinyin": "wù", "meaning": "deber", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "快速", "pinyin": "kuài sù", "meaning": "rápido", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "按(照)", "pinyin": "àn (zhào)", "meaning": "según..., conforme a..., de acuerdo con... (reglas, instrucciones...)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "速", "pinyin": "sù", "meaning": "velocidad (se usa más 速度)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "支持", "pinyin": "zhī chí", "meaning": "apoyo, soporte, apoyar, dar apoyo (figurado)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "积极", "pinyin": "jī jí", "meaning": "positivo, activo, entusiasta, proactivo", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "原因", "pinyin": "yuán yīn", "meaning": "causa, motivo, razón", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "拒绝", "pinyin": "jù jué", "meaning": "rechazar, rehusar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "原", "pinyin": "yuán", "meaning": "original (lo primero, lo de origen...)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "拒", "pinyin": "jù", "meaning": "rechazar, resistirse", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "及时", "pinyin": "jí shí", "meaning": "a tiempo, puntualmente, en el momento adecuado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "绝", "pinyin": "jué", "meaning": "cortar, terminar, decidir firmemente", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "舞会", "pinyin": "wǔ huì", "meaning": "baile, fiesta", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "邀请", "pinyin": "yāo qǐng", "meaning": "invitar, Doc, invitación", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "邀", "pinyin": "yāo", "meaning": "invitar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "累 / 累", "pinyin": "lèi / lěi", "meaning": "cansado/acumular, conectar, involucrar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "不得不", "pinyin": "bù dé bù", "meaning": "no tener más remedio que..., verse forzado a...", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "极其", "pinyin": "jí qí", "meaning": "+adjetivo: extremadamente", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "接受", "pinyin": "jiē shòu", "meaning": "recibir (cosas abstractas), aceptar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "原(来)", "pinyin": "yuán (lái)", "meaning": "original, el origen, lo primero", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "受", "pinyin": "shòu", "meaning": "sufrir, recibir, ser objeto de", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "份", "pinyin": "fèn", "meaning": "una parte de; clasificador de periódicos, revistas, regalos, raciones de comida, trabajos, muestras de cariño, ingredientes...", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "计划书", "pinyin": "jì huà shū", "meaning": "plan o informe redactado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "超速", "pinyin": "chāo sù", "meaning": "superar el límite de velocidad, límite de velocidad", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "有经验", "pinyin": "yǒu jīng yàn", "meaning": "experimentado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "超", "pinyin": "chāo", "meaning": "superar, exceder, super...", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "教育学家", "pinyin": "jiào yù xué jiā", "meaning": "pedagogo/a", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "超过", "pinyin": "chāo guò", "meaning": "superar, exceder, sobrepasar, adelantar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "速度", "pinyin": "sù dù", "meaning": "velocidad", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "加速(度)", "pinyin": "jiā sù (dù)", "meaning": "acelerar, aceleración, aumentar la velocidad", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "加快速(度)", "pinyin": "jiā kuài sù (dù)", "meaning": "darse más prisa, aumentar el ritmo", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "高速公路", "pinyin": "gāo sù gōng lù", "meaning": "autopista, autovía", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "放慢速度", "pinyin": "fàng màn sù dù", "meaning": "reducir la velocidad, ir más lento", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "网速", "pinyin": "wǎng sù", "meaning": "velocidad de conexión a internet", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "风速", "pinyin": "fēng sù", "meaning": "velocidad del viento", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "能力", "pinyin": "néng lì", "meaning": "capacidad", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "语速", "pinyin": "yǔ sù", "meaning": "velocidad del habla", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "责任", "pinyin": "zé rèn", "meaning": "responsabilidad, deber", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "责任心", "pinyin": "zé rèn xīn", "meaning": "sentido de responsabilidad (respecto a tareas o situaciones)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "通过", "pinyin": "tōng guò", "meaning": "atravesar un lugar físico, a través o por medio de..., aprobar, ser aceptado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "责任感", "pinyin": "zé rèn gǎn", "meaning": "sentimiento de responsabilidad (intrínseco a las personas)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "目的", "pinyin": "mù dì", "meaning": "propósito, objetivo, meta, finalidad...", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "责", "pinyin": "zé", "meaning": "deber, obligación", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "极小", "pinyin": "jí xiǎo", "meaning": "raramente, muy pocas veces", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "分数", "pinyin": "fēn shù", "meaning": "nota, calificación, resultados deportivos", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "顾客", "pinyin": "gù kè", "meaning": "cliente", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "回忆", "pinyin": "huí yì", "meaning": "recordar (rememorar), recuerdo", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "悔", "pinyin": "huǐ", "meaning": "lamentar, arrepentirse", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "报道", "pinyin": "bào dào", "meaning": "informar, reportar, cubrir una noticia, informe, noticia, reportaje", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "经历", "pinyin": "jīng lì", "meaning": "experiencia (algo que se experimenta)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "广告", "pinyin": "guǎng gào", "meaning": "anuncio, anunciar, publicidad", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "西服", "pinyin": "xī fú", "meaning": "traje estilo occidental", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "后悔", "pinyin": "hòu huǐ", "meaning": "arrepentirse, arrepentimiento", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "倍", "pinyin": "bèi", "meaning": "vez, pero como cuantificador (dos veces más que tú...)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "乘客", "pinyin": "chéng kè", "meaning": "pasajero", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "马虎", "pinyin": "mǎ hu", "meaning": "descuidado, negligente, poco cuidadoso (por flojo)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "礼貌", "pinyin": "lǐ mào", "meaning": "educado, educación, cortesía", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "虎", "pinyin": "hǔ", "meaning": "tigre", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "貌", "pinyin": "mào", "meaning": "cara, apariencia, aspecto", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "粗心", "pinyin": "cū xīn", "meaning": "descuidado, negligente, no prestar atención a los detalles (por falta de atención o concentración)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "粗", "pinyin": "cū", "meaning": "ancho, espesor, descuidado", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "吃苦", "pinyin": "chī kǔ", "meaning": "soportar las dificultades", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "躺", "pinyin": "tǎng", "meaning": "tumbarse", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "重点", "pinyin": "zhòng diǎn", "meaning": "punto clave", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "博士", "pinyin": "bó shì", "meaning": "doctorado, sabio, erudito, consejero", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "发生", "pinyin": "fā sheng", "meaning": "ocurrir (algo)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "博", "pinyin": "bó", "meaning": "extenso, amplio, rico/ obtener, ganar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "父亲", "pinyin": "fù qin", "meaning": "padre", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "报考", "pinyin": "bào kǎo", "meaning": "inscribirse a un examen", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "父", "pinyin": "fù", "meaning": "padre", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "亲", "pinyin": "qīn", "meaning": "padres, pariente/ cercano, íntimo/ personalmente, en persona/ besar", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "例", "pinyin": "lì", "meaning": "ejemplo, caso", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "母亲", "pinyin": "mǔ qīn", "meaning": "madre", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "性别", "pinyin": "xìng bié", "meaning": "género (masculino, femenino...)", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "母", "pinyin": "mǔ", "meaning": "madre", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "享乐", "pinyin": "xiǎng lè", "meaning": "disfrutar de comodidades", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "享", "pinyin": "xiǎng", "meaning": "disfrutar, gozar de , “tener el uso de / beneficiarse de algo”", "level": "HSK5", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "偷懒", "pinyin": "tōu lǎn", "meaning": "holgazanear, ser perezoso, andarse con pereza", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "例如", "pinyin": "lì rú", "meaning": "por ejemplo", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "父母亲", "pinyin": "fù mǔ qīn", "meaning": "padres", "level": "HSK4", "curso": "4下", "tema": "9", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "春暖花开", "pinyin": "chūn nuǎn huā kāi", "meaning": "Frase estilo chengyu: “Cuando la primavera calienta, las flores se abren”", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "与", "pinyin": "yǔ", "meaning": "...y... , ...con... , ...junto con...", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "于是", "pinyin": "yúshì", "meaning": "por eso, por lo tanto (coloquial)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "脱掉", "pinyin": "tuōdiào", "meaning": "quitarse la ropa, complementos, calzado…", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "最终", "pinyin": "zuìzhōng", "meaning": "finalmente, al final, en última instancia", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "脱", "pinyin": "tuō", "meaning": "desnudarse, versión monosílaba de 脱掉", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "由于", "pinyin": "yóu_yú", "meaning": "debido a…(formal). no necesita conectores posteriores del tipo 所以，于是，因址…", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "用力", "pinyin": "yònglì", "meaning": "con fuerza, hacer fuerza, esforzarse", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "由", "pinyin": "yóu", "meaning": "causado por…", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "察", "pinyin": "chá", "meaning": "examinar, observar con atención, inspeccionar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "十字路口", "pinyin": "shízì lùkǒu", "meaning": "cruce en forma de cruz", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "抱歉", "pinyin": "bàoqiàn", "meaning": "sentirlo, disculparse, estar apenado (抱歉,+frase)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "警察", "pinyin": "jǐngchá", "meaning": "policía", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "抱", "pinyin": "bào", "meaning": "abrazar, sostener, tener entre los brazos", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "警", "pinyin": "jǐng", "meaning": "advertir, alertar, avisar, estar en guardia", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "歉", "pinyin": "qiàn", "meaning": "sentirse en deuda, avergonzado, apenado…", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "款", "pinyin": "kuǎn", "meaning": "clasificador específico para \"modelos\", \"estilos\", “diseños”…", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "白费", "pinyin": "báifèi", "meaning": "desperdiciar, malgastar en vano, esfuerzo perdido, en balde", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "交警", "pinyin": "jiāojǐng", "meaning": "policía de tráfico", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "适应", "pinyin": "shìyìng", "meaning": "adaptarse a…( puede sustituirse por 习惯)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "现有", "pinyin": "xiànyǒu", "meaning": "existente, actual", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "打招呼", "pinyin": "dǎzhāohu", "meaning": "saludar, saludo", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "条件", "pinyin": "tiáojiàn", "meaning": "condiciones, requisitos para algo, condiciones en la que algo se encuentra (literal y figurado)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "招呼", "pinyin": "zhāohu", "meaning": "saludo", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "结果", "pinyin": "jiéguǒ", "meaning": "resultado de algo, y al final… (sorpresa)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "材料", "pinyin": "cáiliào", "meaning": "material ya sea físico (materia prima) o informativo (materia de una asignatura o documentación para hacer un trámite)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "材", "pinyin": "cái", "meaning": "material, “especialmente madera” o “materia prima”", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "招", "pinyin": "zhāo", "meaning": "llama, atraer, invitar, hacer señas con la mano", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "呼", "pinyin": "hū", "meaning": "exhalar, respirar, gritar, llamar, clamar, emitir un sonido fuerte", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "顺序", "pinyin": "shùnxù", "meaning": "orden, secuencia, sucesión, orden correcto", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "帮一把", "pinyin": "bāng yìbǎ", "meaning": "echar una mano", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "序", "pinyin": "xù", "meaning": "orden, secuencia, sucesión", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "整理", "pinyin": "zhěnglǐ", "meaning": "ordenar, organizar, arreglar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "正确", "pinyin": "zhèngquè", "meaning": "correcto, acertado", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "整", "pinyin": "zhěng", "meaning": "todo, entero, completo, arreglar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "确", "pinyin": "què", "meaning": "verdadero", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "理", "pinyin": "lǐ", "meaning": "orden, principio, manejar, organizar, razón", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "坚持", "pinyin": "jiānchí", "meaning": "perseverar, insistir, mantenerse firme", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "方法", "pinyin": "fāngfǎ", "meaning": "método, forma de hacer algo", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "坚", "pinyin": "jiān", "meaning": "firme, resistente, duro", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "部", "pinyin": "bù", "meaning": "clasificador (películas, series, obras musicales, novelas de envergadura / diccionarios)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "浪费", "pinyin": "làngfèi", "meaning": "malgastar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "演", "pinyin": "yǎn", "meaning": "interpretar, actuar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "浪", "pinyin": "làng", "meaning": "olas/loco, fiestero", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "抱住", "pinyin": "bàozhù", "meaning": "abrazar con fuerza", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "给出", "pinyin": "gěichū", "meaning": "dar, ofrecer, proporcionar, presentar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "拉", "pinyin": "lā", "meaning": "tirar, arrastrar, traer hacia uno / tocar instrumento de cuerda", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "拉近", "pinyin": "lājìn", "meaning": "acercar, reducir distancia (literal y figurado)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "难受", "pinyin": "nánshòu", "meaning": "sentirse o encontrarse mal", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "面试", "pinyin": "miànshì", "meaning": "entrevista (laboral, selección, evaluación…)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "特点", "pinyin": "tèdiǎn", "meaning": "característica, rasgo distintivo", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "举办", "pinyin": "jǔbàn", "meaning": "organizar, montar (da importancia al que lo organiza)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "友好", "pinyin": "yǒuhǎo", "meaning": "amable, cordial, amistoso", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "举", "pinyin": "jǔ", "meaning": "alzar, elegir; citar, enumerar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "讨论", "pinyin": "tǎolùn", "meaning": "discutir, debatir, analizar un tema", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "讨", "pinyin": "tǎo", "meaning": "solicitar, pedir, demandar / casarse (con una mujer)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "道歉", "pinyin": "dàoqiàn", "meaning": "disculparse, pedir perdón, disculpa. requiere objeto o contexto, (向+persona+道歉)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "论", "pinyin": "lùn", "meaning": "discutir, hablar, argumentar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "歉意", "pinyin": "qiànyì", "meaning": "disculpa, pesar, sentimiento de disculpa (sustantivo muy formal)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "梦", "pinyin": "mèng", "meaning": "sueño (lo que se sueña)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "招人", "pinyin": "zhāorén", "meaning": "contratar personal", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "做梦", "pinyin": "zuòmèng", "meaning": "soñar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "整齐", "pinyin": "zhěngqí", "meaning": "orden, en orden, ordenadamente", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "噩梦", "pinyin": "èmèng", "meaning": "pesadilla", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "森林", "pinyin": "sēnlín", "meaning": "bosque, selva", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "齐", "pinyin": "qí", "meaning": "uniforme, parejo, igual / estar todos presentes", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "森", "pinyin": "sēn", "meaning": "boscoso, oscuro, sombrío", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "树林", "pinyin": "shùlin", "meaning": "arboleda, zona arbolada", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "熟悉", "pinyin": "shúxī", "meaning": "estar familiarizado con …, conocer bien…, tener experiencia o costumbre con…", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "林", "pinyin": "lín", "meaning": "conjunto de árboles", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "熟", "pinyin": "shú", "meaning": "maduro, experto", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "悉", "pinyin": "xī", "meaning": "conocer a fondo", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "西红柿", "pinyin": "xīhóngshì", "meaning": "tomate", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "保证", "pinyin": "bǎozhèng", "meaning": "garantizar, asegurar, prometer / garantía", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "柿", "pinyin": "shì", "meaning": "caqui", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "证", "pinyin": "zhèng", "meaning": "documento, certificado, prueba", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "理解", "pinyin": "lǐjiě", "meaning": "entender, comprender de verdad algo que requiere reflexión, o con ideas complejas o en asuntos de empatía emocional", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "证明", "pinyin": "zhèngmíng", "meaning": "probar, evidenciar, demostrar certificar / prueba, evidencia, certificado", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "散步", "pinyin": "sànbù", "meaning": "caminar por placer, dar un paseo. (走走 es estirar las piernas)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "散", "pinyin": "sàn", "meaning": "dispersar, dispersarse, deshacerse / terminar (reunión, acto) / esparcir, extender, distribuir", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "盐", "pinyin": "yán", "meaning": "sal", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "步行", "pinyin": "bùxíng", "meaning": "caminar (como medio de desplazarse)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "盐水", "pinyin": "yánshuǐ", "meaning": "agua salada, disolución salina", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "合格", "pinyin": "hégé", "meaning": "apto, cualificado, que cumple los requisitos", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "准确", "pinyin": "zhǔnquè", "meaning": "exacto, preciso, acertado", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "合", "pinyin": "hé", "meaning": "combinar, unir, sumar", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "钥匙", "pinyin": "yaòshi", "meaning": "llaves", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "钥", "pinyin": "yào", "meaning": "pieza metálica para abrir / instrumento de cierre", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "孙", "pinyin": "sūn", "meaning": "nieto", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "匙/匙", "pinyin": "shi/chí", "meaning": "--/cuchara", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 5 },
+  { "hanzi": "秒钟", "pinyin": "miǎozhōng", "meaning": "segundo (de tiempo)", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "孙子", "pinyin": "sūnzi", "meaning": "nieto", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "性格", "pinyin": "xìnggé", "meaning": "carácter, personalidad", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "孙女", "pinyin": "sūnnǚ", "meaning": "nieta", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "性", "pinyin": "xìng", "meaning": "carácter, naturaleza, cualidad, género", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "浪漫", "pinyin": "làngmàn", "meaning": "romántico, romanticismo", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "慢", "pinyin": "màn", "meaning": "derramarse, desbordarse, libre, informal", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "害羞", "pinyin": "hàixiū", "meaning": "tímido, vergonzoso", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "漫画", "pinyin": "mànhuà", "meaning": "cómic, historieta, manga", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "羞", "pinyin": "xiū", "meaning": "vergüenza, pudor", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "主动", "pinyin": "zhǔdòng", "meaning": "tomar la iniciativa, hacer algo sin que lo pidan", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "演员", "pinyin": "yǎnyuán", "meaning": "actor, actriz", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 3 },
+  { "hanzi": "高度", "pinyin": "gāodù", "meaning": "altitud", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "预", "pinyin": "yù", "meaning": "anticipar, prever, con antelación", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "牙膏", "pinyin": "yágāo", "meaning": "pasta de dientes", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 2 },
+  { "hanzi": "膏", "pinyin": "gāo", "meaning": "ungüento, pomada, pasta espesa", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 1 },
+  { "hanzi": "预习", "pinyin": "yùxí", "meaning": "estudiar la lección antes de darla en clase", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 },
+  { "hanzi": "噩", "pinyin": "è", "meaning": "aterrador", "level": "HSK4", "curso": "4下", "tema": "10", "_course": "hsk4_inf", "tone": 4 }
 ];
 
 const COURSE_LEVEL_LABELS = {
-  "HSK1": "HSK 1",
-  "HSK2": "HSK 2",
-  "HSK3_1": "HSK 3",
-  "HSK3_2": "HSK 3",
-  "HSK4_1": "HSK 4",
-  "HSK4_2": "HSK 4",
-  "HSK4_3": "HSK 4"
+  "hsk4_sup": "HSK 4 Superior (T1-T5)",
+  "hsk4_inf": "HSK 4 Inferior (T6-T10)",
+  "hsk5": "HSK 5"
 };
 
-const TONE_MAP = {
-  'ā':1,'ē':1,'ī':1,'ō':1,'ū':1,'ǖ':1,
-  'á':2,'é':2,'í':2,'ó':2,'ú':2,'ǘ':2,
-  'ǎ':3,'ě':3,'ǐ':3,'ǒ':3,'ǔ':3,'ǚ':3,
-  'à':4,'è':4,'ì':4,'ò':4,'ù':4,'ǜ':4,
-};
-
-const TONE_COLORS = { "1":"#ff2a2a","2":"#ffb000","3":"#27ae60","4":"#2980b9","0":"#a78bfa" };
-
-function getToneOfSyllable(syll) {
-  for (const ch of syll) {
-    if (TONE_MAP[ch] !== undefined) return TONE_MAP[ch];
-  }
-  return 0;
-}
-
-function computeTone(hanzi, pinyin) {
-  const clean = (pinyin || "").replace(/[?？！!…,，.。]/g, "").trim();
-  const syllables = clean.split(/\s+/).filter(Boolean);
-  const nChars = (hanzi || "").length;
-  let tones = syllables.map(getToneOfSyllable);
-  if (tones.length === 0) tones = [0];
-  if (tones.length < nChars) {
-    while (tones.length < nChars) tones.push(tones[tones.length - 1]);
-  } else if (tones.length > nChars && nChars > 0) {
-    tones = tones.slice(0, nChars);
-  }
-  return tones.join("-");
-}
-
-function getToneColor(tone) { return TONE_COLORS[tone] || "#f0f0f0"; }
-
-let currentExternalAudio = null;
-let selectedVoiceType = localStorage.getItem("hanzi-voice-type") || "youdao";
-let selectedVoiceSpeed = parseFloat(localStorage.getItem("hanzi-voice-speed") || "1.0");
-
-function speak(text) {
-  if (!text) return;
-  if (typeof speechSynthesis !== 'undefined') { speechSynthesis.cancel(); }
-  if (currentExternalAudio) { currentExternalAudio.pause(); currentExternalAudio.currentTime = 0; }
-
-  if (selectedVoiceType === "youdao") {
-    const url = "https://dict.youdao.com/dictvoice?audio=" + encodeURIComponent(text) + "&le=zh";
-    currentExternalAudio = new Audio(url);
-    currentExternalAudio.play().catch(() => {});
-    return;
-  }
-
-  if (typeof SpeechSynthesisUtterance !== 'undefined') {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'zh-CN';
-    utterance.rate = selectedVoiceSpeed;
-    const zhVoices = speechSynthesis.getVoices().filter(v => 
-      v.lang.toLowerCase().startsWith('zh-cn') || 
-      v.lang.toLowerCase().startsWith('zh_cn') ||
-      v.lang.toLowerCase().includes('zh')
-    );
-    if (zhVoices.length > 0) {
-      if (selectedVoiceType === "fluida" && zhVoices[0]) utterance.voice = zhVoices[0];
-      else if (selectedVoiceType === "energica" && zhVoices[1]) utterance.voice = zhVoices[1];
-      else if (selectedVoiceType === "locutor" && zhVoices[2]) utterance.voice = zhVoices[2];
-      else utterance.voice = zhVoices[0];
-    }
-    speechSynthesis.speak(utterance);
-  }
-}
-
-if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
-}
-
-const STORAGE_KEY = "hanzis-weights";
-
-function loadWeights() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) { return {}; }
-}
-function saveWeights(weights) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(weights)); } catch (e) {}
-}
-
-const state = {
-  screen: "loading",        
-  allWords: [],              
-  availableCourses: [],       
-  selectedCourses: [],
-  words: [],                 
-  persistedWeights: {},      
-  weights: {},                
-  shuffled: [],
-  cardIndex: 0,
-  flipped: false,
-  showPinyin: true,
+// --- ESTADO DE LA APLICACIÓN ---
+let state = {
+  view: "SELECT_COURSE", // Vistas válidas: SELECT_COURSE, SELECT_TOPIC, STUDY, BROWSE
+  selectedCourses: [],   // Cursos elegidos en la primera pantalla
+  selectedTopic: "all",  // Tema elegido en la segunda pantalla ("all" o el número de tema)
+  words: [],
+  currentIndex: 0,
+  isRevealed: false,
   browseSearch: "",
-  quiz: { queue: [], pos: 0, options: [], selected: null, score: 0, total: 0, done: false },
+  weights: {}
 };
 
-function wordKey(w) { return w.hanzi + "|" + w.pinyin; }
+let writerInstance = null;
 
-async function loadAllCourses() {
-  const results = [];
-  for (const course of COURSE_FILES) {
-    try {
-      const res = await fetch(course.file);
-      if (!res.ok) continue; 
-      const data = await res.json();
-      data.forEach(entry => {
-        entry._course = course.id;
-        entry.tone = computeTone(entry.hanzi, entry.pinyin);
-      });
-      results.push({ ...course, words: data });
-    } catch (e) { continue; }
-  }
-  return results;
-}
-
-async function init() {
-  state.persistedWeights = loadWeights();
-  const courses = await loadAllCourses();
-  state.availableCourses = courses;
-  state.allWords = courses.flatMap(c => c.words);
-  state.selectedCourses = courses.map(c => c.id); 
-  state.screen = state.availableCourses.length ? "course-select" : "error";
-  render();
-}
-
-function getFilteredWords() {
-  return state.allWords.filter(w => state.selectedCourses.includes(w._course));
-}
-
-function buildQueue(words, weights) {
-  const queue = [];
-  words.forEach((_, i) => {
-    const reps = Math.max(1, Math.min(weights[i] || 1, 5));
-    for (let r = 0; r < reps; r++) queue.push(i);
-  });
-  return queue.sort(() => Math.random() - 0.5);
-}
-
-function genOptions(words, idx) {
-  const word = words[idx];
-  const pool = words.filter(w => w.hanzi !== word.hanzi);
-  const wrong = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
-  return [...wrong, word].sort(() => Math.random() - 0.5);
-}
-
-function startQuiz() {
-  const words = state.words;
-  const len = Math.min(20, words.length);
-  const q = buildQueue(words, state.weights).slice(0, len);
-  state.quiz = { queue: q, pos: 0, options: genOptions(words, q[0]), selected: null, score: 0, total: 0, done: false };
-  state.screen = "quiz";
-  render();
-}
-
-function answerQuiz(optIdx) {
-  if (state.quiz.selected !== null) return;
-  const words = state.words;
-  const wordIdx = state.quiz.queue[state.quiz.pos];
-  const current = words[wordIdx];
-  const opt = state.quiz.options[optIdx];
-  const correct = opt.hanzi === current.hanzi;
-  state.quiz.selected = optIdx;
-
-  if (correct) {
-    speak(current.hanzi);
-    state.quiz.score++;
-    state.weights[wordIdx] = Math.max(1, (state.weights[wordIdx] || 1) - 1);
-  } else {
-    state.weights[wordIdx] = Math.min(5, (state.weights[wordIdx] || 1) + 2);
-  }
-  state.persistedWeights[wordKey(current)] = state.weights[wordIdx];
-  saveWeights(state.persistedWeights);
-
-  state.quiz.total++;
-  render();
-
-  const quizLen = Math.min(20, words.length);
-  setTimeout(() => {
-    const next = state.quiz.pos + 1;
-    if (next >= state.quiz.queue.length || state.quiz.total >= quizLen) {
-      state.quiz.done = true;
-    } else {
-      state.quiz.pos = next;
-      state.quiz.options = genOptions(words, state.quiz.queue[next]);
-      state.quiz.selected = null;
-    }
-    render();
-  }, 1600);
-}
-
-/* LÓGICA DE MANEJO DE HANZI WRITER (TRAZOS) */
-let currentWriterInstance = null;
-let currentActiveChar = "";
-
-function openStrokeModal(hanziString) {
-  if (!hanziString) return;
-  const characters = hanziString.replace(/[^\u4e00-\u9fa5]/g, "").split("");
-  if (characters.length === 0) return;
-
-  const overlay = document.getElementById("writer-overlay");
-  const tabsContainer = document.getElementById("writer-tabs-container");
-  tabsContainer.innerHTML = "";
-
-  characters.forEach((char, index) => {
-    const tab = document.createElement("button");
-    tab.className = "writer-tab" + (index === 0 ? " active" : "");
-    tab.textContent = char;
-    tab.onclick = () => {
-      document.querySelectorAll(".writer-tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      loadHanziWriterChar(char);
-    };
-    tabsContainer.appendChild(tab);
-  });
-
-  overlay.classList.add("open");
-  loadHanziWriterChar(characters[0]);
-}
-
-function closeStrokeModal(e) {
-  if (e) e.stopPropagation();
-  document.getElementById("writer-overlay").classList.remove("open");
-  document.getElementById("writer-target").innerHTML = "";
-  currentWriterInstance = null;
-}
-
-function loadHanziWriterChar(char) {
-  currentActiveChar = char;
-  document.getElementById("writer-target").innerHTML = "";
-  
-  currentWriterInstance = HanziWriter.create('writer-target', char, {
-    width: 180,
-    height: 180,
-    padding: 15,
-    strokeColor: '#c084fc',
-    radicalColor: '#f43f5e',
-    outlineColor: 'rgba(255,255,255,0.08)',
-    backgroundColor: '#190a35',
-    showOutline: true,
-    delayBetweenLoops: 1000
-  });
-  
-  currentWriterInstance.animateCharacter();
-}
-
-function triggerStrokeAnim() {
-  if (currentWriterInstance) {
-    currentWriterInstance.cancelQuiz();
-    currentWriterInstance.animateCharacter();
-  }
-}
-
-function triggerStrokeQuiz() {
-  if (currentWriterInstance) {
-    currentWriterInstance.quiz();
-  }
-}
-
+// --- UTILIDADES ELEMENTOS DOM ---
 function el(tag, attrs = {}, children = []) {
-  const node = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (v === null || v === false || v === undefined) continue; 
-    if (k === "class") node.className = v;
-    else if (k === "onclick") node.addEventListener("click", v);
-    else if (k === "oninput") node.addEventListener("input", v);
-    else if (k === "onchange") node.addEventListener("change", v);
-    else if (k === "html") node.innerHTML = v;
-    else node.setAttribute(k, v);
+  const element = document.createElement(tag);
+  for (let key in attrs) {
+    if (key.startsWith("on")) {
+      element.addEventListener(key.substring(2).toLowerCase(), attrs[key]);
+    } else if (key === "class" && attrs[key]) {
+      element.className = attrs[key];
+    } else if (attrs[key] !== null && attrs[key] !== undefined) {
+      element.setAttribute(key, attrs[key]);
+    }
   }
-  (Array.isArray(children) ? children : [children]).forEach(c => {
-    if (c == null) return;
-    if (typeof c === "string") node.appendChild(document.createTextNode(c));
-    else node.appendChild(c);
+  if (typeof children === "string") {
+    element.textContent = children;
+  } else if (Array.isArray(children)) {
+    children.forEach(c => { if(c) element.appendChild(c); });
+  }
+  return element;
+}
+
+function coloredHanziEl(hanzi, explicitTone, fontSize = 70) {
+  const container = el("div", { style: `display:flex; gap:4px; justify-content:center; font-size:${fontSize}px; font-weight:bold;` });
+  for (let i = 0; i < hanzi.length; i++) {
+    const char = hanzi[i];
+    let t = explicitTone || 5;
+    if (!explicitTone && state.words[state.currentIndex]) {
+      t = state.words[state.currentIndex].tone || 5;
+    }
+    container.appendChild(el("span", { class: `tone${t}` }, char));
+  }
+  return container;
+}
+
+// --- FLUJO Y LÓGICA DE NEGOCIO ---
+function toggleCourseSelection(courseKey) {
+  const idx = state.selectedCourses.indexOf(courseKey);
+  if (idx > -1) {
+    state.selectedCourses.splice(idx, 1);
+  } else {
+    state.selectedCourses.push(courseKey);
+  }
+  render();
+}
+
+// Pasa de la pantalla de cursos a la pantalla de selección de temas
+function goToTopicSelection() {
+  if (state.selectedCourses.length === 0) return;
+  state.view = "SELECT_TOPIC";
+  state.selectedTopic = "all"; // Reiniciar por defecto
+  render();
+}
+
+// Pasa de la selección de temas al inicio del juego/estudio
+function startStudy(topicKey) {
+  state.selectedTopic = topicKey;
+
+  // Filtrar vocabulario por Cursos seleccionados Y Tema seleccionado
+  state.words = DATA_DICTIONARY.filter(item => {
+    const matchesCourse = state.selectedCourses.includes(item._course);
+    const matchesTopic = (topicKey === "all" || item.tema === topicKey);
+    return matchesCourse && matchesTopic;
   });
-  return node;
+
+  // Mezclar aleatoriamente el set filtrado
+  state.words.sort(() => Math.random() - 0.5);
+
+  state.currentIndex = 0;
+  state.isRevealed = false;
+  state.weights = {};
+  state.view = "STUDY";
+  
+  render();
+  setTimeout(initWriter, 50);
 }
 
-function header(title, rightText, backFn) {
-  return el("div", { class: "header" }, [
-    backFn ? el("button", { class: "back-btn", onclick: backFn }, "← Atrás") : el("span"),
-    el("span", { class: "logo" }, title),
-    el("span", { style: "font-size:13px;color:rgba(240,232,254,0.5)" }, rightText || ""),
-  ]);
-}
-
-function coloredHanziEl(hanzi, tone, size) {
-  const tones = tone.split("-");
-  const wrap = el("div", { class: "word-hanzi", style: `font-size:${size}px`, onclick: (e) => { e.stopPropagation(); openStrokeModal(hanzi); } });
-  hanzi.split("").forEach((ch, i) => {
-    wrap.appendChild(el("span", { style: `color:${getToneColor(tones[i] || tones[0])}` }, ch));
-  });
-  return wrap;
-}
-
-function renderVoiceControls() {
-  const selectVoz = el("select", {
-    class: "voice-select",
-    onchange: (e) => {
-      selectedVoiceType = e.target.value;
-      localStorage.setItem("hanzi-voice-type", selectedVoiceType);
-    }
-  }, [
-    el("option", { value: "youdao", selected: selectedVoiceType === "youdao" ? "selected" : null }, "👩‍💼 Voz Estándar"),
-    el("option", { value: "fluida", selected: selectedVoiceType === "fluida" ? "selected" : null }, "👩 Voz Fluida"),
-    el("option", { value: "energica", selected: selectedVoiceType === "energica" ? "selected" : null }, "👨 Voz Enérgica"),
-    el("option", { value: "locutor", selected: selectedVoiceType === "locutor" ? "selected" : null }, "👨‍💼 Voz Locutor")
-  ]);
-
-  const speedValLabel = el("span", { class: "speed-val" }, selectedVoiceSpeed.toFixed(2) + "x");
-  const sliderSpeed = el("input", {
-    type: "range", min: "0.5", max: "2.0", step: "0.05", class: "speed-slider",
-    value: selectedVoiceSpeed.toString(),
-    oninput: (e) => {
-      selectedVoiceSpeed = parseFloat(e.target.value);
-      speedValLabel.textContent = selectedVoiceSpeed.toFixed(2) + "x";
-      localStorage.setItem("hanzi-voice-speed", selectedVoiceSpeed.toString());
-    }
-  });
-
-  return el("div", { class: "voice-controls-panel" }, [
-    el("div", { class: "voice-control-row" }, [
-      el("span", { class: "voice-label" }, "Tipo de voz:"),
-      selectVoz
-    ]),
-    el("div", { class: "voice-control-row" }, [
-      el("span", { class: "voice-label" }, "Velocidad:"),
-      el("div", { class: "speed-container" }, [sliderSpeed, speedValLabel])
-    ])
-  ]);
-}
-
-function render() {
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  if (state.screen === "loading") {
-    app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
-      el("div", { style: "color:rgba(240,232,254,0.5);font-size:14px" }, "Cargando vocabulario…")
-    ));
-    return;
-  }
-
-  if (state.screen === "error") {
-    app.appendChild(el("div", { class: "main center-col", style: "padding-top:80px" },
-      el("div", { style: "color:rgba(240,232,254,0.6);font-size:14px;text-align:center" },
-        "No se pudo cargar ningún fichero de vocabulario. Revisa que existan en /data/ y que los nombres coincidan exactamente.")
-    ));
-    return;
-  }
-
-  if (state.screen === "course-select") {
-    const main = el("div", { class: "main center-col" });
-    main.appendChild(el("div", { class: "hero-emoji" }, "选择"));
-    main.appendChild(el("div", { class: "hero-label" }, "¿Qué curso quieres repasar?"));
-    main.appendChild(el("div", { class: "hero-sub" }, "Puedes elegir uno o varios"));
-
-    const list = el("div", { style: "width:100%" });
-    state.availableCourses.forEach(c => {
-      const active = state.selectedCourses.includes(c.id);
-      const btn = el("button", {
-        class: "course-btn" + (active ? " active" : ""),
-        onclick: () => {
-          state.selectedCourses = active
-            ? state.selectedCourses.filter(x => x !== c.id)
-            : [...state.selectedCourses, c.id];
-          render();
-        }
-      }, [
-        el("div", { style: "display:flex;align-items:center" }, [
-          el("div", { class: "checkbox" + (active ? " active" : "") }, active ? "✓" : ""),
-          el("div", { style: "font-size:17px;font-weight:700" }, c.label),
-        ]),
-        el("div", { style: "font-size:12px;color:rgba(240,232,254,0.45)" }, c.words.length + " palabras"),
-      ]);
-      list.appendChild(btn);
-    });
-    main.appendChild(list);
-
-    main.appendChild(renderVoiceControls());
-    
-    // Crédito añadido de forma dinámica en la parte inferior de la pantalla inicial
-    main.appendChild(el("div", { class: "credit-text" }, "por obra de José Mª Martínez Blanes"));
-
-    const totalSel = state.allWords.filter(w => state.selectedCourses.includes(w._course)).length;
-    main.appendChild(el("button", {
-      class: "primary-btn",
-      disabled: state.selectedCourses.length === 0 ? "disabled" : null,
-      onclick: () => {
-        if (state.selectedCourses.length === 0) return;
-        state.words = getFilteredWords();
-        state.shuffled = [...state.words].sort(() => Math.random() - 0.5);
-        state.weights = {};
-        state.words.forEach((w, i) => { state.weights[i] = state.persistedWeights[wordKey(w)] || 1; });
-        state.cardIndex = 0;
-        state.screen = "menu";
-        render();
-      }
-    }, state.selectedCourses.length === 0 ? "Elige al menos un curso" : `Continuar (${totalSel} palabras)`));
-
-    app.appendChild(header("Hanzis", state.allWords.length + " palabras totales"));
-    app.appendChild(main);
-    return;
-  }
-
-  if (state.screen === "menu") {
-    const main = el("div", { class: "main center-col" });
-    main.appendChild(el("div", { style: "font-size:14px;color:#c084fc;letter-spacing:1px;text-align:center" },
-      state.selectedCourses.map(id => state.availableCourses.find(c => c.id === id)?.label).join(" · ")));
-    main.appendChild(el("div", { class: "hero-emoji" }, "中文"));
-    main.appendChild(el("div", { class: "hero-label" }, "Repaso de vocabulario"));
-
-    const items = [
-      { id: "flashcard", icon: "🎴", title: "Tarjetas Flash", desc: "Escucha y aprende con tarjetas" },
-      { id: "quiz", icon: "🎯", title: "Quiz con Refuerzo", desc: "Tus fallos se recuerdan entre sesiones" },
-      { id: "browse", icon: "📖", title: "Vocabulario completo", desc: "Explora y escucha todas las palabras" },
-    ];
-    items.forEach(item => {
-      main.appendChild(el("button", {
-        class: "menu-btn",
-        onclick: () => { state.screen = item.id; if (item.id === "quiz") startQuiz(); else render(); }
-      }, [
-        el("span", { class: "menu-icon" }, item.icon),
-        el("div", {}, [
-          el("div", { class: "menu-title" }, item.title),
-          el("div", { class: "menu-desc" }, item.desc),
-        ]),
-      ]));
-    });
-
-    const reinforced = Object.values(state.weights).filter(w => w > 1).length;
-    if (reinforced > 0) {
-      main.appendChild(el("div", { class: "warning-text" }, `⚠ ${reinforced} palabra(s) con refuerzo pendiente (guardado)`));
-    }
-
-    main.appendChild(el("button", {
-      class: "footer-link",
-      onclick: () => {
-        state.persistedWeights = {};
-        saveWeights({});
-        state.words.forEach((_, i) => { state.weights[i] = 1; });
-        render();
-      }
-    }, "Borrar progreso guardado"));
-
-    app.appendChild(header("Hanzis", state.words.length + " palabras", () => { state.screen = "course-select"; render(); }));
-    app.appendChild(main);
-    return;
-  }
-
-  if (state.screen === "flashcard") {
-    const word = state.shuffled[state.cardIndex];
-    const main = el("div", { class: "main" });
-    if (!word) { main.appendChild(el("div", { class: "empty-state" }, "No hay palabras.")); app.appendChild(main); return; }
-
-    const card = el("div", { class: "flashcard" + (state.flipped ? " flipped" : ""), onclick: () => { state.flipped = !state.flipped; render(); } });
-    card.appendChild(coloredHanziEl(word.hanzi, word.tone, 56));
-    if (state.showPinyin || state.flipped) card.appendChild(el("div", { class: "pinyin-text" }, word.pinyin));
-    if (state.flipped) {
-      card.appendChild(el("div", { class: "meaning-text" }, word.meaning));
-    } else {
-      card.appendChild(el("div", { class: "hint-text" }, "Toca para ver el significado o el Hanzi para ver los trazos"));
-    }
-
-    const controls = el("div", { class: "row-controls" }, [
-      el("button", { class: "ctrl-btn", onclick: () => { state.cardIndex = (state.cardIndex - 1 + state.shuffled.length) % state.shuffled.length; state.flipped = false; render(); } }, "←"),
-      el("button", { class: "speak-btn", onclick: () => speak(word.hanzi) }, "🔊 Escuchar"),
-      el("button", { class: "ctrl-btn", onclick: () => { state.cardIndex = (state.cardIndex + 1) % state.shuffled.length; state.flipped = false; render(); } }, "→"),
-    ]);
-
-    const pinyinToggle = el("div", { style: "display:flex;justify-content:center" },
-      el("button", { class: "toggle-btn" + (state.showPinyin ? " active" : ""), onclick: () => { state.showPinyin = !state.showPinyin; render(); } },
-        state.showPinyin ? "🔤 Ocultar Pinyin" : "🔤 Mostrar Pinyin")
-    );
-
-    main.appendChild(card);
-    main.appendChild(controls);
-    main.appendChild(pinyinToggle);
-
-    app.appendChild(header("Tarjetas Flash", (state.cardIndex + 1) + "/" + state.shuffled.length, () => { state.screen = "menu"; render(); }));
-    app.appendChild(main);
-    return;
-  }
-
-  if (state.screen === "quiz") {
-    const main = el("div", { class: "main" });
-    const words = state.words;
-
-    if (state.quiz.done) {
-      const pct = state.quiz.total ? state.quiz.score / state.quiz.total : 0;
-      const emoji = pct >= 0.8 ? "🏆" : pct >= 0.5 ? "👍" : "💪";
-      const reinforced = Object.values(state.weights).filter(w => w > 1).length;
-      main.appendChild(el("div", { class: "center-col", style: "padding-top:48px" }, [
-        el("div", { style: "font-size:64px" }, emoji),
-        el("div", { style: "font-size:46px;font-weight:700;color:#c084fc" }, [
-          state.quiz.score.toString(),
-          el("span", { style: "font-size:22px;color:rgba(240,232,254,0.4)" }, "/" + state.quiz.total),
-        ]),
-        reinforced > 0 ? el("div", { style: "background:rgba(192,132,252,0.1);border:1px solid rgba(192,132,252,0.3);border-radius:12px;padding:10px 20px;font-size:13px;color:#c084fc" },
-          `${reinforced} palabra(s) con refuerzo guardado · seguirán apareciendo más, incluso si cierras la app`) : null,
-        el("button", { class: "primary-btn", style: "max-width:300px", onclick: startQuiz }, "Otro intento"),
-        el("button", { class: "footer-link", onclick: () => { state.screen = "menu"; render(); } }, "Menú"),
-      ]));
-      app.appendChild(header("Resultado", "", null));
-      app.appendChild(main);
-      return;
-    }
-
-    const wordIdx = state.quiz.queue[state.quiz.pos];
-    const current = words[wordIdx];
-    const isAnswered = state.quiz.selected !== null;
-    const wasCorrect = isAnswered && state.quiz.options[state.quiz.selected].hanzi === current.hanzi;
-    const quizLen = Math.min(20, words.length);
-
-    main.appendChild(el("div", { class: "progress-text" }, `Pregunta ${state.quiz.total + 1} de ${quizLen}`));
-    main.appendChild(el("div", { class: "progress-bar-bg" },
-      el("div", { class: "progress-bar-fill", style: `width:${(state.quiz.total / quizLen) * 100}%` })));
-
-    const card = el("div", { class: "quiz-card" + (isAnswered ? (wasCorrect ? " correct" : " wrong") : "") });
-    if (!isAnswered) {
-      card.appendChild(el("div", { style: "font-size:11px;color:rgba(240,232,254,0.4);margin-bottom:16px;letter-spacing:1px" }, "Escucha y elige el significado"));
-      card.appendChild(el("button", { class: "big-play-btn", onclick: () => speak(current.hanzi) }, "🔊"));
-    } else {
-      card.appendChild(el("div", { style: "font-size:11px;color:rgba(240,232,254,0.4);letter-spacing:1px" }, wasCorrect ? "✓ Correcto" : "✗ Incorrecto"));
-      card.appendChild(coloredHanziEl(current.hanzi, current.tone, 50));
-      card.appendChild(el("div", { style: "font-size:16px;color:#c084fc" }, current.pinyin));
-      card.appendChild(el("div", { style: "font-size:13px;color:rgba(240,232,254,0.8);line-height:1.4;max-width:480px" }, current.meaning));
-      card.appendChild(el("button", { style: "margin-top:4px;background:rgba(147,51,234,0.3);border:1px solid rgba(192,132,252,0.4);color:#c084fc;border-radius:8px;padding:5px 14px;cursor:pointer;font-size:12px", onclick: () => speak(current.hanzi) }, "🔊 Escuchar de nuevo"));
-    }
-    main.appendChild(card);
-
-    if (isAnswered || true) {
-      const grid = el("div", { class: "opt-grid" });
-      state.quiz.options.forEach((opt, i) => {
-        let cls = "opt-btn";
-        if (isAnswered) {
-          if (opt.hanzi === current.hanzi) cls += " correct";
-          else if (i === state.quiz.selected) cls += " wrong";
-        }
-        grid.appendChild(el("button", { class: cls, onclick: () => answerQuiz(i) }, opt.meaning));
-      });
-      main.appendChild(grid);
-    }
-
-    app.appendChild(header("Quiz", "✓ " + state.quiz.score, () => { state.screen = "menu"; render(); }));
-    app.appendChild(main);
-    return;
-  }
-
-  if (state.screen === "browse") {
-    const main = el("div", { class: "main" });
-    main.appendChild(el("input", {
-      class: "search-input", type: "text", placeholder: "Buscar por hanzi, pinyin o significado...",
-      value: state.browseSearch,
-      oninput: (e) => { state.browseSearch = e.target.value; render(); }
-    }));
-
-    const q = state.browseSearch.toLowerCase();
-    const filtered = state.words.filter(w =>
-      w.hanzi.includes(state.browseSearch) ||
-      w.pinyin.toLowerCase().includes(q) ||
-      w.meaning.toLowerCase().includes(q)
-    );
-
-    const list = el("div");
-    filtered.forEach(word => {
-      const idx = state.words.indexOf(word);
-      const wgt = state.weights[idx] || 1;
-      const realLevelText = COURSE_LEVEL_LABELS[word._course] || word._course;
-
-      const row = el("div", { class: "word-row" + (wgt > 1 ? " reinforced" : "") }, [
-        el("div", { class: "word-left-block" }, [
-          el("div", { class: "word-top-meta" }, [
-            el("div", { class: "word-course-tag" }, realLevelText),
-            coloredHanziEl(word.hanzi, word.tone, 32),
-            el("div", { class: "word-pinyin" }, word.pinyin)
-          ]),
-          el("div", { class: "word-meaning" }, word.meaning)
-        ]),
-        el("div", { class: "word-right-block" }, [
-          wgt > 1 ? el("span", { class: "weight-badge" }, "×" + wgt) : null,
-          el("button", { class: "play-icon-btn", onclick: () => speak(word.hanzi) }, "🔊")
-        ])
-      ]);
-      list.appendChild(row);
-    });
-    if (filtered.length === 0) list.appendChild(el("div", { class: "empty-state" }, "Sin resultados."));
-    main.appendChild(list);
-
-    app.appendChild(header("Vocabulario", filtered.length.toString(), () => { state.screen = "menu"; render(); }));
-    app.appendChild(main);
-    return;
-  }
-}
-
-init();
-</script>
-</body>
-</html>
+function initWriter() {
+  if (state.view !== "STUDY" || state.words.length === 0) return;
+  const currentWord = state.words[state.currentIndex];
+  
+  document.getElementById("writer-target").innerHTML = "";
